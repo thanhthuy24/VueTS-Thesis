@@ -218,7 +218,7 @@
     </aside>
     <div class="p-4">
       <div
-        class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 grid grid-cols-2 md:grid-cols-4 gap-4"
+        class="mb-5 p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 grid grid-cols-2 md:grid-cols-4 gap-4"
       >
         <div
           v-for="c in courseStore.courses"
@@ -337,8 +337,10 @@
               </div>
             </div>
           </div>
+
           <a
-            href="#"
+            @click="cartStore.addToCart(c)"
+            style="cursor: pointer"
             class="mt-auto inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
             <span class="ml-24">Add to cart</span>
@@ -377,9 +379,11 @@ import { useCourseStore } from '@/stores/CourseStore'
 import { useLoginStore } from '@/stores/LoginStore'
 import { onMounted, ref } from 'vue'
 import PaginationLayout from './pagination/PaginationLayout.vue'
+import { useCartStore } from '@/stores/CartStore'
 
 const courseStore = useCourseStore()
 const loginStore = useLoginStore()
+const cartStore = useCartStore()
 
 const handlePageChange = async (newPage: number) => {
   await courseStore.changePage(newPage)

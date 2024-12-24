@@ -12,6 +12,8 @@ export const endpoints = {
 
   enrollments: '/enrollments',
 
+  payment: '/payment',
+
   rating: '/rating',
 }
 
