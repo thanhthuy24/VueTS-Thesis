@@ -14,6 +14,7 @@ export const useLoginStore = defineStore('loginStore', {
     username: '' as string,
     password: '' as string,
     currentUser: null as {
+      id: number
       username: string
       avatar: string
       email: string

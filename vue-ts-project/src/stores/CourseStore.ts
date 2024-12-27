@@ -19,12 +19,13 @@ export const useCourseStore = defineStore('courseStore', {
     }>,
     totalPages: 0,
     page: 0,
-    limit: 4,
+    limit: 2,
     cateFilter: null as number | null,
     minPrice: null as number | null,
     maxPrice: null as number | null,
     countLesson: {} as Record<number, number>,
     countEnrolled: {} as Record<number, number>,
+    courseErolled: [],
   }),
 
   actions: {
@@ -34,6 +35,22 @@ export const useCourseStore = defineStore('courseStore', {
         this.categories = res.data
       } catch (error) {
         console.error(error)
+      }
+    },
+
+    async checkCourseEnrolled(courseId: number, userId: number, token: string) {
+      try {
+        const res = await authAPIs().get(
+          `${endpoints.enrollments}/check-enrollment?userId=${userId}&courseId=${courseId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        )
+        this.courseErolled = res.data
+      } catch (err) {
+        console.error(err)
       }
     },
 
@@ -54,6 +71,8 @@ export const useCourseStore = defineStore('courseStore', {
 
         const countPromiseEnroll = this.courses.map((course) => this.countEnrollments(course.id))
         await Promise.all(countPromiseEnroll)
+
+        // const checkEnrolled = this.courses.map((course) => this.checkCourseEnrolled(course.id, ))
       } catch (err) {
         console.error(err)
       }
