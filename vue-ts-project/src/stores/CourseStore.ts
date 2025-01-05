@@ -19,7 +19,7 @@ export const useCourseStore = defineStore('courseStore', {
     }>,
     totalPages: 0,
     page: 0,
-    limit: 2,
+    limit: 6,
     cateFilter: null as number | null,
     minPrice: null as number | null,
     maxPrice: null as number | null,

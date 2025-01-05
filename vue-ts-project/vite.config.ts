@@ -10,6 +10,9 @@ export default defineConfig({
   plugins: [vue(), vueJsx(), vueDevTools()],
   server: {
     port: 8082, // Đặt cổng bạn muốn, ví dụ: 3000
+    // proxy: {
+    //   '/api': 'http://localhost:8080', // Đảm bảo các yêu cầu API được chuyển đến backend đúng
+    // },
   },
   resolve: {
     alias: {

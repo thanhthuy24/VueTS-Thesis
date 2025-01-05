@@ -13,6 +13,7 @@ export const endpoints = {
   enrollments: '/enrollments',
 
   payment: '/payment',
+  paypal: '/paypal',
 
   rating: '/rating',
 }

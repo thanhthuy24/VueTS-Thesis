@@ -225,9 +225,9 @@
           :key="c.id"
           class="flex-courses max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
         >
-          <a href="#">
-            <img class="rounded-t-lg image-tital-course" :src="c.image" alt="" />
-          </a>
+          <RouterLink to="/course-detail">
+            <a> <img class="rounded-t-lg image-tital-course" :src="c.image" alt="" /> </a
+          ></RouterLink>
           <div class="p-5 flex-grow">
             <!-- <a href="#"> -->
             <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
@@ -380,6 +380,7 @@ import { useLoginStore } from '@/stores/LoginStore'
 import { onMounted, ref } from 'vue'
 import PaginationLayout from './pagination/PaginationLayout.vue'
 import { useCartStore } from '@/stores/CartStore'
+import { RouterLink } from 'vue-router'
 // import { authAPIs, endpoints } from '@/configs/APIs'
 
 const courseStore = useCourseStore()

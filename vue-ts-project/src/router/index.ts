@@ -28,6 +28,27 @@ const router = createRouter({
       name: 'cart',
       component: () => import('../views/cart/CartCourse.vue'),
     },
+    {
+      path: '/course-detail',
+      name: 'course-detail',
+      component: () => import('../views/course/CourseDetail.vue'),
+    },
+    {
+      path: '/paypal/success',
+      meta: {
+        layout: 'NoHeaderLayout',
+      },
+      name: 'success',
+      component: () => import('../views/cart/PaypalSuccess.vue'),
+    },
+    {
+      path: '/paypal/cancel',
+      meta: {
+        layout: 'NoHeaderLayout',
+      },
+      name: 'cancel',
+      component: () => import('../views/cart/PaypalCancel.vue'),
+    },
   ],
 })
 
