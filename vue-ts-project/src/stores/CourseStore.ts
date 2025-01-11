@@ -1,6 +1,21 @@
 import APIs, { authAPIs, endpoints } from '@/configs/APIs'
 import { defineStore } from 'pinia'
 
+interface Course {
+  id: number
+  name: string
+  image: string
+  description: string
+  price: number
+  discount: number
+  teacher: {
+    user: {
+      username: string
+      avatar: string
+    }
+  }
+}
+
 export const useCourseStore = defineStore('courseStore', {
   state: () => ({
     categories: [] as Array<{ id: number; name: string }>,
@@ -17,6 +32,8 @@ export const useCourseStore = defineStore('courseStore', {
         }
       }
     }>,
+
+    course: {} as Course,
     totalPages: 0,
     page: 0,
     limit: 6,
@@ -123,6 +140,16 @@ export const useCourseStore = defineStore('courseStore', {
       if (newPage >= 0 && newPage <= this.totalPages) {
         this.page = newPage
         await this.loadCourses()
+      }
+    },
+
+    async loadCourseById(courseId: number) {
+      try {
+        const res = await APIs.get(`${endpoints.courses}/${courseId}`)
+        this.course = res.data
+        console.log(this.courses)
+      } catch (err) {
+        console.error(err)
       }
     },
 

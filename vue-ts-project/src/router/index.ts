@@ -29,7 +29,7 @@ const router = createRouter({
       component: () => import('../views/cart/CartCourse.vue'),
     },
     {
-      path: '/course-detail',
+      path: '/course-detail/:courseId',
       name: 'course-detail',
       component: () => import('../views/course/CourseDetail.vue'),
     },

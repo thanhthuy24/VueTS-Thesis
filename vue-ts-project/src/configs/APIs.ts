@@ -9,6 +9,9 @@ export const endpoints = {
   categories: '/categories',
   courses: '/courses',
   lessons: '/lessons',
+  videos: '/videos',
+  assignments: '/assignments',
+  questions: '/questions',
 
   enrollments: '/enrollments',
 
