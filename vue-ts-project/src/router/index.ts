@@ -1,6 +1,7 @@
 // import UserLayout from '@/components/layouts/UserLayout.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/UserHomePage.vue'
+import { useLoginStore } from '@/stores/LoginStore'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +27,7 @@ const router = createRouter({
     {
       path: '/cart',
       name: 'cart',
+      meta: { requiresAuth: true },
       component: () => import('../views/cart/CartCourse.vue'),
     },
     {
@@ -49,7 +51,32 @@ const router = createRouter({
       name: 'cancel',
       component: () => import('../views/cart/PaypalCancel.vue'),
     },
+    {
+      path: '/forbidden',
+      meta: {
+        layout: 'NoHeaderLayout',
+      },
+      name: 'forbidden',
+      component: () => import('../views/warning/403Forbidden.vue'),
+    },
+    {
+      path: '/user-dashboard',
+      name: 'user-dashboard',
+      meta: { requiresAuth: true },
+      component: () => import('../views/user/UserDashboard.vue'),
+    },
   ],
+})
+
+router.beforeEach((to, from, next) => {
+  const loginStore = useLoginStore()
+  const isLoggedIn = loginStore.currentUser !== null
+
+  if (to.meta.requiresAuth && !isLoggedIn) {
+    next({ path: '/forbidden' })
+  } else {
+    next()
+  }
 })
 
 export default router

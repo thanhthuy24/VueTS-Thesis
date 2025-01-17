@@ -1,4 +1,4 @@
-import APIs, { endpoints } from '@/configs/APIs'
+import APIs, { authAPIs, endpoints } from '@/configs/APIs'
 import router from '@/router'
 import dayjs from 'dayjs'
 import { defineStore } from 'pinia'
@@ -9,6 +9,7 @@ export const useLoginStore = defineStore('loginStore', {
     // => Nên dùng kiểu dữ liệu nguyên thủy (boolean, string, ...)
 
     isLoggedIn: false as boolean,
+    avatarURL: '',
     token: '' as string,
     role: '' as string,
     username: '' as string,
@@ -20,7 +21,8 @@ export const useLoginStore = defineStore('loginStore', {
       email: string
       phone: string
       firstName: string
-      lastName: string
+      lastName: string | null
+      dateOfBirth: Date | null
       role: {
         id: number
         name: string
@@ -47,11 +49,9 @@ export const useLoginStore = defineStore('loginStore', {
           },
         })
         this.currentUser = response.data
+        console.log(this.currentUser)
         this.role = response.data.role.name
         this.isLoggedIn = true
-
-        // console.log('5454' + this.currentUser?.role?.name)
-        // console.log('5454' + this.role)
 
         localStorage.setItem('currentUser', JSON.stringify(this.currentUser))
         localStorage.setItem('role', this.role)
@@ -65,6 +65,32 @@ export const useLoginStore = defineStore('loginStore', {
         }
       } catch (err) {
         this.isLoggedIn = false
+        console.error(err)
+      }
+    },
+
+    async updateAvatar(userId: number, file: File, token: string) {
+      try {
+        // tạo form data
+        const formData = new FormData()
+        formData.append('file', file)
+        formData.append('lastName', this.currentUser?.lastName)
+        formData.append('firstName', this.currentUser?.firstName)
+        formData.append('email', this.currentUser?.email)
+        formData.append('phone', this.currentUser?.phone)
+        // formData.append('dateOfBirth', this.currentUser?.dateOfBirth)
+        formData.append('username', this.currentUser?.username)
+
+        const res = await authAPIs().patch(`${endpoints.user}/update-avatar/${userId}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`,
+          },
+        })
+
+        this.avatarURL = res.data.avatar
+        console.log(this.avatarURL)
+      } catch (err) {
         console.error(err)
       }
     },

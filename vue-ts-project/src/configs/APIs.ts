@@ -3,6 +3,7 @@ import axios from 'axios'
 const BASE_URL = 'http://localhost:8080/api/'
 
 export const endpoints = {
+  user: '/users',
   login: '/users/login',
   currentUser: '/users/current-user',
 

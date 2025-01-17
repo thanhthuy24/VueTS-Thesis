@@ -10,5 +10,11 @@
     {
       "path": "./tsconfig.vitest.json"
     }
-  ]
+  ],
+  "compilerOptions": {
+    "noImplicitAny": false, // Tắt cảnh báo "any"
+    "allowJs": true, // Cho phép import file JS
+    "resolveJsonModule": true,
+    "esModuleInterop": true // Hỗ trợ các module dạng CommonJS
+  }
 }
