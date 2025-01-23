@@ -149,7 +149,7 @@ export const useCourseStore = defineStore('courseStore', {
       try {
         const res = await APIs.get(`${endpoints.courses}/${courseId}`)
         this.course = res.data
-        console.log(res.data)
+        // console.log(res.data)
       } catch (err) {
         console.error(err)
       }

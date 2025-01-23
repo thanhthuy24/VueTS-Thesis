@@ -34,6 +34,9 @@ export const useLessonStore = defineStore('lessonStore', {
     totalVideo: 0,
     assignment: [] as Assignment[],
     totalQuestion: {} as { [key: number]: number },
+    lessonsByCourseId: {} as Lesson[],
+    videoUrl: '',
+    currentVideoId: 0,
   }),
 
   actions: {
@@ -51,8 +54,19 @@ export const useLessonStore = defineStore('lessonStore', {
       try {
         const res = await APIs.get(`${endpoints.lessons}/get-first-lesson/course/${courseId}`)
         this.lesson = res.data
-        console.log('lessons')
-        console.log(res.data)
+        // console.log('lessons')
+        // console.log(res.data)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    async loadLessonsByCourseId(courseId: number) {
+      try {
+        const res = await authAPIs().get(`${endpoints.lessons}/auth/course/${courseId}`)
+        this.lessonsByCourseId = res.data
+        // console.log('lessons by courseId')
+        // console.log(res.data)
       } catch (err) {
         console.error(err)
       }
@@ -62,7 +76,7 @@ export const useLessonStore = defineStore('lessonStore', {
       try {
         const res = await APIs.get(`${endpoints.assignments}/lesson/${lessonId}`)
         this.assignment = res.data
-        console.log(res.data)
+        // console.log(res.data)
       } catch (err) {
         console.error(err)
       }
@@ -76,6 +90,23 @@ export const useLessonStore = defineStore('lessonStore', {
       } catch (err) {
         console.error(err)
       }
+    },
+
+    async saveVideoComplete(videoId: number) {
+      try {
+        await authAPIs().post(`${endpoints.videoComplete}`, {
+          video_id: videoId,
+        })
+        console.log('Save video successfull')
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    chooseVideo(video: Video) {
+      this.videoUrl = video.name
+      this.currentVideoId = video.id
+      // console.log(this.videoUrl)
     },
   },
 })

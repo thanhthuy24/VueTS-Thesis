@@ -25,6 +25,8 @@ export const endpoints = {
   paypal: '/paypal',
 
   rating: '/rating',
+
+  videoComplete: '/video-completed',
 }
 
 export const authAPIs = () => {

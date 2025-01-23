@@ -75,10 +75,7 @@ onMounted(async () => {
   for (const course of courseEnrolled.courseList) {
     const res = await courseEnrolled.loadProcess(course.course.id)
     progress.value[course.course.id] = res
-    console.log('--------' + course.course.id + ' .... ' + res)
   }
-
-  // courseEnrolled.courseList.forEach(async (course) => {})
 })
 </script>
 <style scoped>

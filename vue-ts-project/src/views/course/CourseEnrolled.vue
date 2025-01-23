@@ -1,5 +1,5 @@
 <template>
-  <main class="ml-20 mt-10">
+  <main class="ml-14 mt-10">
     <div
       class="p-4 mb-4 mr-10 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
       role="alert"
@@ -13,7 +13,7 @@
             ref="videoPlayer"
             style="width: 980px"
             controls
-            @ended="handleVideoEnded(currentVideoId)"
+            @ended="lessonStore.saveVideoComplete(lessonStore.currentVideoId)"
           >
             <source :src="videoUrl" type="video/mp4" />
             Your browser does not support the video tag.
@@ -390,6 +390,47 @@
           </div>
         </div>
       </div>
+      <div>
+        <div
+          v-for="lesson in lessonStore.lessonsByCourseId"
+          :key="lesson.id"
+          id="accordion-arrow-icon"
+          data-accordion="open"
+          style="width: 500px"
+          class="ml-5 mr-10"
+        >
+          <div>
+            <h2 :id="`accordion-arrow-icon-heading-${lesson.id}}`">
+              <button
+                type="button"
+                class="flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-900 bg-gray-100 border border-b-0 border-gray-200 rounded-t-xl focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3"
+                data-accordion-target="#accordion-arrow-icon-body-1"
+                aria-expanded="true"
+                aria-controls="accordion-arrow-icon-body-1"
+              >
+                <span>{{ lesson.name }}</span>
+              </button>
+            </h2>
+            <div
+              style="cursor: pointer"
+              v-if="lesson.videos && lesson.videos.length > 0"
+              :id="`accordion-arrow-icon-body-${lesson.id}`"
+              :aria-labelledby="`accordion-arrow-icon-heading-${lesson.id}`"
+            >
+              <div
+                v-for="video in lesson.videos"
+                :key="video.id"
+                @click="chooseVideo(video)"
+                class="p-5 border border-b-0 border-gray-200 dark:border-gray-700 dark:bg-gray-900"
+              >
+                <p class="mb-2 text-gray-500 dark:text-gray-400">
+                  {{ video.description }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </main>
 </template>
@@ -397,15 +438,17 @@
 import { useAssignmentStore } from '@/stores/AssignmentStore'
 // import { useCourseEnrolled } from '@/stores/CourseEnrolledStore'
 import { useCourseStore } from '@/stores/CourseStore'
+import { useLessonStore } from '@/stores/LessonStore'
 // import { useLoginStore } from '@/stores/LoginStore'
 import { format } from 'date-fns'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
 // const courseEnrolled = useCourseEnrolled()
 const courseStore = useCourseStore()
 const assignmentStore = useAssignmentStore()
+const lessonStore = useLessonStore()
 // const loginStore = useLoginStore()
 
 const courseIdParam = route.params.courseId
@@ -429,10 +472,25 @@ const isExpired = (dueDate: number) => {
 
 const assignmentDone = ref<Record<number, number>>({})
 
+const videoPlayer = ref<HTMLVideoElement | null>(null)
+const videoUrl = ref(lessonStore.videoUrl)
+
+watch(videoUrl, () => {
+  if (videoPlayer.value) {
+    videoPlayer.value.load()
+  }
+})
+
+const chooseVideo = (video: Video) => {
+  lessonStore.chooseVideo(video)
+  videoUrl.value = lessonStore.videoUrl // Cập nhật videoUrl
+}
+
 onMounted(async () => {
-  console.log(courseId)
+  videoUrl.value = ''
   await courseStore.loadCourseById(courseId)
   await assignmentStore.loadAssignments(courseId)
+  await lessonStore.loadLessonsByCourseId(courseId)
 
   for (const a of assignmentStore.assignments) {
     const res = await assignmentStore.loadAssignmentDone(a.id)
