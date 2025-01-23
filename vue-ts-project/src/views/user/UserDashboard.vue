@@ -6,22 +6,34 @@
       </div>
 
       <div class="w-full flex justify-center">
-        <button
-          type="button"
-          class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-full border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-        >
-          Change your avatar
-        </button>
-        <button
-          type="button"
-          class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
-          Change your password
-        </button>
+        <h2 class="format-username">{{ loginStore.currentUser?.username }}</h2>
       </div>
       <hr />
       <div>
         <ul class="py-1 text-gray-500 dark:text-gray-400" aria-labelledby="dropdown">
+          <li>
+            <a
+              @click="toggleUpdateInformation"
+              style="cursor: pointer"
+              class="flex items-center py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+            >
+              <svg
+                class="mr-2 w-4 h-4 text-gray-400"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 20 18"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M5 8a4 4 0 1 1 7.796 1.263l-2.533 2.534A4 4 0 0 1 5 8Zm4.06 5H7a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h2.172a2.999 2.999 0 0 1-.114-1.588l.674-3.372a3 3 0 0 1 .82-1.533L9.06 13Zm9.032-5a2.907 2.907 0 0 0-2.056.852L9.967 14.92a1 1 0 0 0-.273.51l-.675 3.373a1 1 0 0 0 1.177 1.177l3.372-.675a1 1 0 0 0 .511-.273l6.07-6.07a2.91 2.91 0 0 0-.944-4.742A2.907 2.907 0 0 0 18.092 8Z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+
+              Update Information
+            </a>
+          </li>
           <li>
             <a
               @click="toggleChangeAvatar"
@@ -72,8 +84,101 @@
       </div>
     </section>
     <section class="flex-item-3">
-      <div class="border-div-1">
-        <div v-if="isChangePassword">55555</div>
+      <div>
+        <div
+          v-if="isChangePassword"
+          class="flex flex-col items-center px-6 py-8 mx-auto md:h-screen lg:py-0"
+        >
+          <div
+            class="w-full p-6 bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md dark:bg-gray-800 dark:border-gray-700 sm:p-8"
+          >
+            <h2
+              class="mb-1 text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
+            >
+              Change Password
+            </h2>
+            <form
+              class="mt-4 space-y-4 lg:mt-5 md:space-y-5"
+              @submit.prevent="handleChangePassword"
+            >
+              <div>
+                <label
+                  for="password"
+                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >Your old Password</label
+                >
+                <input
+                  v-model="oldPassword"
+                  type="password"
+                  name="password"
+                  id="oldPassword"
+                  placeholder="••••••••"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  required
+                />
+              </div>
+              <div>
+                <label
+                  for="password"
+                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >New Password</label
+                >
+                <input
+                  v-model="newPassword"
+                  type="password"
+                  name="password"
+                  id="newPassword"
+                  placeholder="••••••••"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  required
+                />
+              </div>
+              <div>
+                <label
+                  for="confirm-password"
+                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >Confirm password</label
+                >
+                <input
+                  v-model="retypePassword"
+                  type="password"
+                  name="confirm-password"
+                  id="retypePassword"
+                  placeholder="••••••••"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  required
+                />
+              </div>
+              <div class="flex items-start">
+                <div class="flex items-center h-5">
+                  <input
+                    id="newsletter"
+                    aria-describedby="newsletter"
+                    type="checkbox"
+                    class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
+                    required
+                  />
+                </div>
+                <div class="ml-3 text-sm">
+                  <label for="newsletter" class="font-light text-gray-500 dark:text-gray-300"
+                    >I accept the
+                    <a
+                      class="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                      href="#"
+                      >Terms and Conditions</a
+                    ></label
+                  >
+                </div>
+              </div>
+              <button
+                type="submit"
+                class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+              >
+                Reset password
+              </button>
+            </form>
+          </div>
+        </div>
         <div v-if="isChangeAvatar">
           <file-pond
             ref="pond"
@@ -84,7 +189,7 @@
             label-idle="Kéo và thả file"
           />
         </div>
-        <div v-else class="py-8 px-4 mx-auto max-w-2xl lg:py-16">
+        <div v-if="isUserInfor" class="py-8 px-4 mx-auto max-w-2xl lg:py-16">
           <h2 class="mb-4 text-xl font-bold text-gray-900 dark:text-white">User's information</h2>
           <form action="#">
             <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
@@ -185,11 +290,10 @@
 </template>
 <script setup lang="ts">
 import { useLoginStore } from '@/stores/LoginStore'
-import { server } from 'typescript'
 import { computed, ref } from 'vue'
 import Datepicker from 'vue3-datepicker'
 import 'filepond/dist/filepond.min.css'
-import vueFilePond, { setOptions } from 'vue-filepond'
+import vueFilePond from 'vue-filepond'
 
 // Tải FilePond plugin
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
@@ -221,13 +325,25 @@ const format = () => {
 }
 
 const isChangePassword = ref(false)
+const isChangeAvatar = ref(false)
+const isUserInfor = ref(true)
+
 const toggleChangePassword = () => {
   isChangePassword.value = !isChangePassword.value
+  isChangeAvatar.value = false
+  isUserInfor.value = false
 }
 
-const isChangeAvatar = ref(false)
 const toggleChangeAvatar = () => {
   isChangeAvatar.value = !isChangeAvatar.value
+  isChangePassword.value = false
+  isUserInfor.value = false
+}
+
+const toggleUpdateInformation = () => {
+  isUserInfor.value = !isUserInfor.value
+  isChangeAvatar.value = false
+  isChangePassword.value = false
 }
 
 const avatarUrl = ref(loginStore.avatarURL)
@@ -243,6 +359,18 @@ const handleChangeAvatar = {
       error('Có lỗi xảy ra trong quá trình upload.')
     }
   },
+}
+
+const oldPassword = ref<string | null>(null)
+const newPassword = ref<string | null>(null)
+const retypePassword = ref<string | null>(null)
+
+const handleChangePassword = () => {
+  if (oldPassword.value && newPassword.value && retypePassword.value) {
+    loginStore.handleChangePass(oldPassword.value, newPassword.value, retypePassword.value)
+  } else {
+    console.error('oldPassword or newPassword or retypePassword is missing')
+  }
 }
 </script>
 <style scoped>
@@ -268,5 +396,11 @@ const handleChangeAvatar = {
 .border-div-1 {
   border: 1px solid #eff3ea;
   border-radius: 10px;
+}
+
+.format-username {
+  font-size: x-large;
+  font-weight: bold;
+  padding-bottom: 10px;
 }
 </style>

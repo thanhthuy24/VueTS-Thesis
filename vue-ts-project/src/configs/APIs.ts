@@ -11,10 +11,15 @@ export const endpoints = {
   courses: '/courses',
   lessons: '/lessons',
   videos: '/videos',
+
   assignments: '/assignments',
+  assignmentDone: '/assignment-done',
+
   questions: '/questions',
 
   enrollments: '/enrollments',
+
+  progress: '/progress',
 
   payment: '/payment',
   paypal: '/paypal',

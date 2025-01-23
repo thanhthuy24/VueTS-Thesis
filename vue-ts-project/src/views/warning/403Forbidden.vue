@@ -31,15 +31,19 @@
         </svg>
       </h1>
       <h2 class="error-title">You don't have permission to access this page</h2>
-      <p class="error-message">Please login first before going to your cart.</p>
-      <button @click="goBack" class="back-button">Go Back</button>
+      <p class="error-message">Please login first!!</p>
+      <RouterLink to="/home">
+        <button class="back-button">Go Back</button>
+      </RouterLink>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-const goBack = () => {
-  window.history.back()
-}
+import { RouterLink } from 'vue-router'
+
+// const goBack = () => {
+//   window.history.back()
+// }
 </script>
 <style scoped>
 .forbidden {

@@ -61,9 +61,21 @@ const router = createRouter({
     },
     {
       path: '/user-dashboard',
-      name: 'user-dashboard',
       meta: { requiresAuth: true },
+      name: 'user-dashboard',
       component: () => import('../views/user/UserDashboard.vue'),
+    },
+    {
+      path: '/course-enrolled/:courseId',
+      meta: { requiresAuth: true },
+      name: 'course-enrolled',
+      component: () => import('../views/course/CourseEnrolled.vue'),
+    },
+    {
+      path: '/course-enrolled-list',
+      meta: { requiresAuth: true },
+      name: 'course-enrolled-list',
+      component: () => import('../views/course/CourseEnrolledList.vue'),
     },
   ],
 })

@@ -41,6 +41,9 @@
               required
             />
           </div>
+          <div v-if="loginStore.statusWarning" class="format-error-login">
+            Username or Password is not correct!!
+          </div>
         </div>
 
         <div class="relative my-5">
@@ -123,12 +126,12 @@ const password = ref<string | null>(null)
 
 const loginStore = useLoginStore()
 
+// const isLogged = ref(false)
 const handleLogin = () => {
   if (username.value && password.value) {
     loginStore.loginAcc(username.value, password.value)
-    // console.log(loginStore.currentUser?.role.name)
   } else {
-    console.error('Username or password is missing')
+    console.log('Username or password is missing')
   }
 }
 
@@ -136,3 +139,10 @@ onMounted(async () => {
   // await loginStore.loadLogin()
 })
 </script>
+<style scoped>
+.format-error-login {
+  font-size: small;
+  color: red;
+  font-style: italic;
+}
+</style>
