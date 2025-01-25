@@ -1,9 +1,9 @@
 import { authAPIs, endpoints } from '@/configs/APIs'
 import router from '@/router'
 import { defineStore } from 'pinia'
-// import { useToast } from 'vue-toastification'
+import { useToast } from 'vue-toastification'
 
-// const toast = useToast()
+const toast = useToast()
 
 interface Course {
   id: number
@@ -55,15 +55,30 @@ interface Comment {
   user: User
 }
 
+interface ReplyComment {
+  id: number
+  content: string
+  createdDate: number
+  comment: Comment
+  user: User
+}
+
 export const useCourseEnrolled = defineStore('courseEnrolled', {
   state: () => ({
     courseList: [] as Enrollment[],
     progress: [],
-    checkCourseEnrolled: Boolean,
+    checkCourseEnrolledBoolean: false as boolean,
     totalPages: 0,
     page: 0,
-    limit: 6,
+    limit: 2,
     comments: [] as Comment[],
+    countComment: 0,
+    commentReply: [] as ReplyComment[],
+    pageReplyCmt: 0,
+    limitReplyCmt: 3,
+    totalPagesReplyCmt: 0,
+    contentComment: '',
+    contentReplyComment: '',
   }),
   actions: {
     async loadCourseList() {
@@ -77,19 +92,15 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
     },
 
     async checkCourseEnrolled(userId: number, courseId: number) {
-      try {
-        const res = await authAPIs().get(`${endpoints.enrollments}/check-enrollment-boolean`, {
-          params: {
-            userId: userId,
-            courseId: courseId,
-          },
-        })
-        this.checkCourseEnrolled = res.data
-        if (!res.data) {
-          router.push('/forbidden')
-        }
-      } catch (err) {
-        console.error(err)
+      const res = await authAPIs().get(`${endpoints.enrollments}/check-enrollment-boolean`, {
+        params: {
+          userId: userId,
+          courseId: courseId,
+        },
+      })
+      this.checkCourseEnrolledBoolean = res.data
+      if (!res.data) {
+        router.push('/forbidden')
       }
     },
 
@@ -103,21 +114,49 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
         })
         this.comments = res.data.comments
         this.totalPages = res.data.totalPages
-        // console.log(this.comments)
-        // console.log('--------')
-        // console.log(this.totalPages)
       } catch (err) {
         console.error(err)
       }
     },
 
-    toggleCommentSetting(commentId: number) {
-      const button = document.getElementById(`dropdownComment${commentId}Button`)
-      const dropdown = document.getElementById(`dropdownComment${commentId}`)
+    async loadReplyComment(commentId: number) {
+      try {
+        const res = await authAPIs().get(`${endpoints.replyComment}/${commentId}`, {
+          params: {
+            page: this.pageReplyCmt,
+            limit: this.limitReplyCmt,
+          },
+        })
+        this.commentReply[commentId] = res.data.replycomments
+        this.totalPagesReplyCmt = res.data.totalPages
+        console.log(res.data)
+      } catch (err) {
+        console.error(err)
+      }
+    },
 
-      button?.addEventListener('click', () => {
-        dropdown?.classList.toggle('hidden')
-      })
+    async countCommentByLesson(lessonId: number) {
+      try {
+        const res = await authAPIs().get(`${endpoints.comments}/count/lesson/${lessonId}`)
+        this.countComment = res.data
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    async addComment(lessonId: number, content: string) {
+      // console.log('add comment in lesson ' + lessonId + ', with content: ' + content)
+      try {
+        const res = await authAPIs().post(`${endpoints.comments}`, {
+          content: content,
+          lesson_id: lessonId,
+        })
+        console.log(res.data)
+        toast.success('Comment successfully!!!')
+        await this.loadCommentByLessonId(lessonId)
+      } catch (err) {
+        console.error(err)
+      }
     },
 
     async loadProcess(courseId: number) {
@@ -127,6 +166,13 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
         return res.data
       } catch (err) {
         console.error(err)
+      }
+    },
+
+    async changePage(newPage: number, lessonId: number) {
+      if (newPage >= 0 && newPage < this.totalPages) {
+        this.page = newPage
+        await this.loadCommentByLessonId(lessonId)
       }
     },
   },

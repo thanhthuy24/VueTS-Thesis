@@ -139,7 +139,7 @@ export const useCourseStore = defineStore('courseStore', {
     },
 
     async changePage(newPage: number) {
-      if (newPage >= 0 && newPage <= this.totalPages) {
+      if (newPage >= 0 && newPage < this.totalPages) {
         this.page = newPage
         await this.loadCourses()
       }
