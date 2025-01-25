@@ -63,22 +63,45 @@ interface ReplyComment {
   user: User
 }
 
+interface Review {
+  id: number
+  ratingDate: number
+  user: User
+  rating: number
+  comment: string
+}
+
 export const useCourseEnrolled = defineStore('courseEnrolled', {
   state: () => ({
     courseList: [] as Enrollment[],
     progress: [],
     checkCourseEnrolledBoolean: false as boolean,
+
     totalPages: 0,
+    totalPagesReplyCmt: 0,
+    totalPagesReview: 0,
+
     page: 0,
     limit: 2,
+
+    pageReplyCmt: 0,
+    limitReplyCmt: 3,
+
+    pageReviews: 0,
+    limitReviews: 10,
+
     comments: [] as Comment[],
     countComment: 0,
     commentReply: [] as ReplyComment[],
-    pageReplyCmt: 0,
-    limitReplyCmt: 3,
-    totalPagesReplyCmt: 0,
+
     contentComment: '',
     contentReplyComment: '',
+    averageRating: 0,
+    countRatingAll: 0,
+    averagePerRate: [],
+    countPerRate: [],
+
+    review: [] as Review[],
   }),
   actions: {
     async loadCourseList() {
@@ -145,7 +168,6 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
     },
 
     async addComment(lessonId: number, content: string) {
-      // console.log('add comment in lesson ' + lessonId + ', with content: ' + content)
       try {
         const res = await authAPIs().post(`${endpoints.comments}`, {
           content: content,
@@ -159,12 +181,106 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
       }
     },
 
+    async addReplyComment(commentId: number, content: string) {
+      try {
+        const res = await authAPIs().post(`${endpoints.replyComment}`, {
+          content: content,
+          comment_id: commentId,
+        })
+        console.log(res.data)
+        toast.success('reply comment successfully!!!')
+        await this.loadReplyComment(commentId)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
     async loadProcess(courseId: number) {
       try {
         const res = await authAPIs().post(`${endpoints.progress}/course/${courseId}`)
         this.progress[courseId] = res.data
         return res.data
       } catch (err) {
+        console.error(err)
+      }
+    },
+
+    async loadAverageRating(courseId: number) {
+      try {
+        const res = await authAPIs().get(`${endpoints.rating}/${courseId}`)
+        this.averageRating = res.data
+        // console.log(res.data)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    async loadCountRatingAll(courseId: number) {
+      try {
+        const res = await authAPIs().get(`${endpoints.rating}/${courseId}/count`)
+        this.countRatingAll = res.data
+        console.log(res.data)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    // tính phần trăm mà số lượng rate chiếm trong tổng số lượt rate, ví dụ: all: 4 rates, rate 5 có 2 => rate 5 chiếm 50%
+
+    async loadAveragePerRate(courseId: number, rate: number) {
+      try {
+        const res = await authAPIs().get(`${endpoints.rating}/${courseId}/rating/${rate}`)
+        this.averagePerRate[rate] = res.data
+        console.log('rating: ' + rate + ' ~%:  ' + res.data)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    // đếm số lượng rating theo từng rate từ 1 -> 5
+    async loadCountPerRate(courseId: number, rate: number) {
+      try {
+        const res = await authAPIs().get(`${endpoints.rating}/${courseId}/rate/${rate}`)
+        this.countPerRate[rate] = res.data
+        console.log('rate: ' + rate + ': ' + res.data)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    async loadReviews(courseId: number) {
+      try {
+        const res = await authAPIs().get(`${endpoints.rating}/course/${courseId}`, {
+          params: {
+            page: this.pageReviews,
+            limit: this.limitReviews,
+          },
+        })
+        this.review = res.data.ratings
+        this.totalPagesReview = res.data.totalPages
+
+        console.log(res.data)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    async addReview(comment: string, rating: number, courseId: number) {
+      try {
+        const res = await authAPIs().post(endpoints.rating, {
+          comment: comment,
+          rating: rating,
+          course_id: courseId,
+        })
+        console.log(res.data)
+        await this.loadReviews(courseId)
+        toast.success('Review course Successfully!!')
+      } catch (err) {
+        if (err.response && err.response.data === 'Rating already exist!!!') {
+          toast.error('Rating already exist!!!')
+        } else {
+          toast.error('An error occurred. Please try again.')
+        }
         console.error(err)
       }
     },

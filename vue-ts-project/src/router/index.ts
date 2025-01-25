@@ -77,6 +77,24 @@ const router = createRouter({
       name: 'course-enrolled-list',
       component: () => import('../views/course/CourseEnrolledList.vue'),
     },
+    {
+      path: '/course-rating-list/:courseId',
+      meta: { requiresAuth: true },
+      name: 'course-rating-list',
+      component: () => import('../views/course/CourseRating.vue'),
+    },
+    {
+      path: '/register-form',
+      meta: { requiresAuth: true },
+      name: 'register-form',
+      component: () => import('../views/register/RegisterForm.vue'),
+    },
+    {
+      path: '/register-form-list',
+      meta: { requiresAuth: true },
+      name: 'register-form-list',
+      component: () => import('../views/register/RegisterFormList.vue'),
+    },
   ],
 })
 

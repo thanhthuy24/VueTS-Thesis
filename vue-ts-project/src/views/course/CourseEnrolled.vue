@@ -76,6 +76,32 @@
             aria-labelledby="overview-tab"
           >
             <p class="font-title-course">{{ courseStore.course.name }}</p>
+            <RouterLink :to="{ name: 'course-rating-list', params: { courseId: courseId } }">
+              <div class="flex ml-3">
+                <p
+                  class="mt-1 mr-2 text-2xl font-semibold leading-none text-gray-900 dark:text-white"
+                >
+                  {{ courseEnrolled.averageRating }}
+                </p>
+                <svg
+                  class="h-8 w-8 text-yellow-300"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z"
+                  />
+                </svg>
+                <div class="mt-1 ml-2 text-gray-600">
+                  {{ courseEnrolled.countRatingAll }} ratings
+                </div>
+              </div></RouterLink
+            >
+
             <p class="ml-3 my-5">Created date: {{ formatDate(courseStore.course?.createdDate) }}</p>
 
             <div class="relative overflow-x-auto">
@@ -207,6 +233,7 @@
                   </p>
                   <div class="flex items-center mt-4 space-x-4">
                     <button
+                      @click="toggleReplyButton(c.id)"
                       type="button"
                       class="flex items-center text-sm text-gray-500 hover:underline dark:text-gray-400 font-medium"
                     >
@@ -229,6 +256,25 @@
                     </button>
                   </div>
                 </article>
+                <div v-if="replyInputVisible[c.id]" style="margin-left: 7%">
+                  <form @submit.prevent="handleReplyComment(c.id, replyText)">
+                    <textarea
+                      v-model="replyText"
+                      style="width: 595px"
+                      type="text"
+                      placeholder="Write your reply..."
+                      class="border border-gray-300 text-sm rounded-lg p-2.5"
+                      rows="3"
+                    >
+                    </textarea>
+                    <button
+                      type="submit"
+                      class="mt-1 mb-3 bg-blue-500 text-white rounded-lg px-4 py-2"
+                    >
+                      Submit
+                    </button>
+                  </form>
+                </div>
                 <article
                   v-for="reply in courseEnrolled.commentReply[c.id]"
                   :key="reply.id"
@@ -246,9 +292,9 @@
                         />{{ reply.user?.username }}
                       </p>
                       <p class="text-sm text-gray-600 dark:text-gray-400">
-                        <time pubdate datetime="2022-02-12" title="February 12th, 2022"
-                          >Feb. 12, 2022</time
-                        >
+                        <time pubdate datetime="2022-02-12" title="February 12th, 2022">{{
+                          formatDateUpdate(reply.createdDate)
+                        }}</time>
                       </p>
                     </div>
                     <div class="flex">
@@ -430,6 +476,7 @@ import { format } from 'date-fns'
 import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import PaginationLayout from '../pagination/PaginationLayout.vue'
+import CourseRating from './CourseRating.vue'
 
 const route = useRoute()
 const courseEnrolled = useCourseEnrolled()
@@ -443,6 +490,7 @@ const courseId = Number(courseIdParam)
 const userId = Number(loginStore.currentUser?.id)
 
 const contentComment = ref('')
+const replyText = ref('')
 
 const formatDate = (timestamp: number) => {
   try {
@@ -488,6 +536,11 @@ const handleAddComment = async (lessonId: number, content: string) => {
   await courseEnrolled.addComment(lessonId, content)
 }
 
+const handleReplyComment = async (commentId: number, content: string) => {
+  replyText.value = ''
+  await courseEnrolled.addReplyComment(commentId, content)
+}
+
 const chooseVideo = (video: Video) => {
   lessonStore.chooseVideo(video)
   videoUrl.value = lessonStore.videoUrl // Cập nhật videoUrl
@@ -511,6 +564,14 @@ const handlePageChange = async (newPage: number) => {
   }
 }
 
+const replyInputVisible = ref<{ [key: number]: boolean }>({})
+const toggleReplyButton = (commentId: number) => {
+  replyInputVisible.value = {
+    ...replyInputVisible.value,
+    [commentId]: !replyInputVisible.value[commentId],
+  }
+}
+
 onMounted(async () => {
   videoUrl.value = ''
   await courseEnrolled.checkCourseEnrolled(userId, courseId)
@@ -518,6 +579,9 @@ onMounted(async () => {
   await courseStore.loadCourseById(courseId)
   await assignmentStore.loadAssignments(courseId)
   await lessonStore.loadLessonsByCourseId(courseId)
+
+  await courseEnrolled.loadAverageRating(courseId)
+  await courseEnrolled.loadCountRatingAll(courseId)
 
   for (const a of assignmentStore.assignments) {
     const res = await assignmentStore.loadAssignmentDone(a.id)
