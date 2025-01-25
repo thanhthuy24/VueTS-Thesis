@@ -141,7 +141,11 @@
                   Post comment
                 </button>
               </form>
-              <article class="p-6 text-base bg-white rounded-lg dark:bg-gray-900">
+              <article
+                v-for="c in courseEnrolled.comments"
+                :key="c.id"
+                class="p-6 text-base bg-white rounded-lg dark:bg-gray-900"
+              >
                 <footer class="flex justify-between items-center mb-2">
                   <div class="flex items-center">
                     <p
@@ -149,19 +153,19 @@
                     >
                       <img
                         class="mr-2 w-6 h-6 rounded-full"
-                        src="https://flowbite.com/docs/images/people/profile-picture-2.jpg"
+                        :src="c.user.avatar"
                         alt="Michael Gough"
-                      />Michael Gough
+                      />{{ c.user.username }}
                     </p>
                     <p class="text-sm text-gray-600 dark:text-gray-400">
-                      <time pubdate datetime="2022-02-08" title="February 8th, 2022"
-                        >Feb. 8, 2022</time
-                      >
+                      <time pubdate datetime="2022-02-08" title="February 8th, 2022">{{
+                        formatDateUpdate(c.createdDate)
+                      }}</time>
                     </p>
                   </div>
                   <button
-                    id="dropdownComment1Button"
-                    data-dropdown-toggle="dropdownComment1"
+                    :id="`dropdownComment${c.id}Button`"
+                    :data-dropdown-toggle="`dropdownComment${c.id}`"
                     class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-500 dark:text-gray-400 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-50 dark:bg-gray-900 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
                     type="button"
                   >
@@ -180,7 +184,7 @@
                   </button>
                   <!-- Dropdown menu -->
                   <div
-                    id="dropdownComment1"
+                    :id="`dropdownComment${c.id}`"
                     class="hidden z-10 w-36 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600"
                   >
                     <ul
@@ -212,9 +216,7 @@
                   </div>
                 </footer>
                 <p class="text-gray-500 dark:text-gray-400">
-                  Very straight-to-point article. Really worth time reading. Thank you! But tools
-                  are just the instruments for the UX designers. The knowledge of the design tools
-                  are as important as the creation of the design strategy.
+                  {{ c.content }}
                 </p>
                 <div class="flex items-center mt-4 space-x-4">
                   <button
@@ -240,7 +242,7 @@
                   </button>
                 </div>
               </article>
-              <article
+              <!-- <article
                 class="mt-5 p-6 mb-3 ml-6 lg:ml-12 text-base bg-white rounded-lg dark:bg-gray-900"
               >
                 <footer class="flex justify-between items-center mb-2">
@@ -279,7 +281,7 @@
                     </svg>
                     <span class="sr-only">Comment settings</span>
                   </button>
-                  <!-- Dropdown menu -->
+                  Dropdown menu
                   <div
                     id="dropdownComment2"
                     class="hidden z-10 w-36 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600"
@@ -338,7 +340,7 @@
                     Reply
                   </button>
                 </div>
-              </article>
+              </article> -->
             </div>
           </div>
           <div
@@ -400,7 +402,7 @@
           class="ml-5 mr-10"
         >
           <div>
-            <h2 :id="`accordion-arrow-icon-heading-${lesson.id}}`">
+            <h2 @click="loadComments(lesson.id)" :id="`accordion-arrow-icon-heading-${lesson.id}}`">
               <button
                 type="button"
                 class="flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-900 bg-gray-100 border border-b-0 border-gray-200 rounded-t-xl focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3"
@@ -436,28 +438,42 @@
 </template>
 <script lang="ts" setup>
 import { useAssignmentStore } from '@/stores/AssignmentStore'
-// import { useCourseEnrolled } from '@/stores/CourseEnrolledStore'
+import { useCourseEnrolled } from '@/stores/CourseEnrolledStore'
 import { useCourseStore } from '@/stores/CourseStore'
 import { useLessonStore } from '@/stores/LessonStore'
-// import { useLoginStore } from '@/stores/LoginStore'
+import { useLoginStore } from '@/stores/LoginStore'
 import { format } from 'date-fns'
+import { comment } from 'postcss'
 import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
-// const courseEnrolled = useCourseEnrolled()
+const courseEnrolled = useCourseEnrolled()
 const courseStore = useCourseStore()
 const assignmentStore = useAssignmentStore()
 const lessonStore = useLessonStore()
-// const loginStore = useLoginStore()
+const loginStore = useLoginStore()
 
 const courseIdParam = route.params.courseId
 const courseId = Number(courseIdParam)
+const userId = Number(loginStore.currentUser?.id)
 
 const formatDate = (timestamp: number) => {
   try {
     const date = new Date(timestamp) // Chuyển đổi timestamp thành đối tượng Date
     return format(date, 'dd/MM/yyyy') // Định dạng ngày theo kiểu dd/MM/yyyy
+  } catch (error) {
+    console.error('Lỗi khi định dạng ngày: ', error)
+    return 'Invalid date'
+  }
+}
+
+const formatDateUpdate = (timestamp: number) => {
+  try {
+    const date = new Date(timestamp) // Chuyển đổi timestamp thành đối tượng Date
+    const options = { month: 'short', day: '2-digit', year: 'numeric' }
+    const formattedDate = date.toLocaleDateString('en-US', options)
+    return formattedDate
   } catch (error) {
     console.error('Lỗi khi định dạng ngày: ', error)
     return 'Invalid date'
@@ -486,16 +502,32 @@ const chooseVideo = (video: Video) => {
   videoUrl.value = lessonStore.videoUrl // Cập nhật videoUrl
 }
 
+const loadComments = async (lessonId: number) => {
+  console.log('hii comment: ' + lessonId)
+  await courseEnrolled.loadCommentByLessonId(lessonId)
+}
+
+const toggleCommentSetting = (commentId: number) => {
+  const button = document.getElementById(`dropdownComment${commentId}Button`)
+  const dropdown = document.getElementById(`dropdownComment${commentId}`)
+
+  button?.addEventListener('click', () => {
+    dropdown?.classList.toggle('hidden')
+  })
+}
+
 onMounted(async () => {
   videoUrl.value = ''
+  await courseEnrolled.checkCourseEnrolled(userId, courseId)
+  // toggleCommentSetting()
   await courseStore.loadCourseById(courseId)
   await assignmentStore.loadAssignments(courseId)
   await lessonStore.loadLessonsByCourseId(courseId)
+  // await courseEnrolled.loadCommentByLessonId()
 
   for (const a of assignmentStore.assignments) {
     const res = await assignmentStore.loadAssignmentDone(a.id)
     assignmentDone.value[a.id] = res
-    console.log(res)
   }
 })
 </script>

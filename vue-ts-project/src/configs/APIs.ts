@@ -19,6 +19,9 @@ export const endpoints = {
 
   enrollments: '/enrollments',
 
+  comments: '/comments',
+  replyComment: '/reply',
+
   progress: '/progress',
 
   payment: '/payment',

@@ -525,14 +525,4 @@ const loginStore = useLoginStore()
 const cartStore = useCartStore()
 </script>
 
-<style scoped>
-/* header {
-  background-color: #f8f9fa;
-  padding: 1rem;
-}
-nav ul {
-  list-style: none;
-  display: flex;
-  gap: 1rem;
-} */
-</style>
+<style scoped></style>
