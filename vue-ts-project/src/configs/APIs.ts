@@ -22,6 +22,8 @@ export const endpoints = {
   comments: '/comments',
   replyComment: '/reply',
 
+  register: '/register',
+
   progress: '/progress',
 
   payment: '/payment',
