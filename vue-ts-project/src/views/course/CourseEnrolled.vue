@@ -384,32 +384,34 @@
               :key="item.id"
               class="border-assignment"
             >
-              <div class="flex justify-between">
-                <p style="font-weight: bold">{{ item.name }}</p>
+              <RouterLink :to="{ name: 'assignment-choice', params: { assignmentId: item.id } }">
+                <div class="flex justify-between">
+                  <p style="font-weight: bold">{{ item.name }}</p>
 
-                <button
-                  v-if="assignmentStore.assignmentDone[item.id]"
-                  :style="{
-                    width: '100px',
-                    borderRadius: '5px',
-                    backgroundColor: 'green',
-                    color: 'white',
-                  }"
-                >
-                  Done
-                </button>
-                <button
-                  v-else
-                  :style="{
-                    width: '100px',
-                    borderRadius: '5px',
-                    backgroundColor: isExpired(item.dueDate) ? 'blue' : 'red',
-                    color: 'white',
-                  }"
-                >
-                  {{ isExpired(item.dueDate) ? 'Do now!!' : 'Time out' }}
-                </button>
-              </div>
+                  <button
+                    v-if="assignmentStore.assignmentDone[item.id]"
+                    :style="{
+                      width: '100px',
+                      borderRadius: '5px',
+                      backgroundColor: 'green',
+                      color: 'white',
+                    }"
+                  >
+                    Done
+                  </button>
+                  <button
+                    v-else
+                    :style="{
+                      width: '100px',
+                      borderRadius: '5px',
+                      backgroundColor: isExpired(item.dueDate) ? 'blue' : 'red',
+                      color: 'white',
+                    }"
+                  >
+                    {{ isExpired(item.dueDate) ? 'Do now!!' : 'Time out' }}
+                  </button>
+                </div>
+              </RouterLink>
               <div class="mt-5">
                 <p>
                   Deadline:
@@ -476,7 +478,6 @@ import { format } from 'date-fns'
 import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import PaginationLayout from '../pagination/PaginationLayout.vue'
-import CourseRating from './CourseRating.vue'
 
 const route = useRoute()
 const courseEnrolled = useCourseEnrolled()

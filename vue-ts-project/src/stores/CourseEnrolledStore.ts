@@ -76,6 +76,7 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
     courseList: [] as Enrollment[],
     progress: [],
     checkCourseEnrolledBoolean: false as boolean,
+    checkEnrollmentBoolean: false as boolean,
 
     totalPages: 0,
     totalPagesReplyCmt: 0,
@@ -125,6 +126,17 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
       if (!res.data) {
         router.push('/forbidden')
       }
+    },
+
+    async checkEnrollment(userId: number, courseId: number) {
+      const res = await authAPIs().get(`${endpoints.enrollments}/check-enrollment-boolean`, {
+        params: {
+          userId: userId,
+          courseId: courseId,
+        },
+      })
+      this.checkEnrollmentBoolean = res.data
+      console.log(res.data)
     },
 
     async loadCommentByLessonId(lessonId: number) {

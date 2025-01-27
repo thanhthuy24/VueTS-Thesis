@@ -17,6 +17,9 @@ export const endpoints = {
 
   questions: '/questions',
 
+  answerChoices: '/answer-choices',
+  score: '/score',
+
   enrollments: '/enrollments',
 
   comments: '/comments',

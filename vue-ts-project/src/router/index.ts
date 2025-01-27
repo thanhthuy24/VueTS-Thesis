@@ -95,6 +95,18 @@ const router = createRouter({
       name: 'register-form-list',
       component: () => import('../views/register/RegisterFormList.vue'),
     },
+    {
+      path: '/assignment-choice/:assignmentId',
+      meta: { requiresAuth: true },
+      name: 'assignment-choice',
+      component: () => import('../views/assignment/AssignmentChoice.vue'),
+    },
+    {
+      path: '/assignment-essay/:assignmentId',
+      meta: { requiresAuth: true },
+      name: 'assignment-essay',
+      component: () => import('../views/assignment/AssignmentEssay.vue'),
+    },
   ],
 })
 
