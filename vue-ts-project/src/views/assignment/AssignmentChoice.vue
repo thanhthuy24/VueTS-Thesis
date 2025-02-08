@@ -6,11 +6,12 @@
           {{ assignmentStore.assignment.name }}
         </h2>
         <div class="mt-5 flex justify-around">
-          <div>
+          <div v-if="assignmentStore.assignment?.tag?.id == 5">
             <form @submit.prevent="assignmentStore.addAnswer(assignmentId)">
               <div v-for="(item, index) in assignmentStore.questions" :key="index">
                 <p>Câu {{ index + 1 }}: {{ item.content }}</p>
                 <div class="my-3 ml-8">
+                  <!-- <p>{{ assignmentStore.assignment.tag.id }}</p> -->
                   <ul
                     class="w-48 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   >
@@ -74,6 +75,64 @@
               </button>
             </form>
           </div>
+          <div v-else class="mr-36">
+            <form @submit.prevent="assignmentStore.addEssay(assignmentId)">
+              <div v-for="(item, index) in assignmentStore.questionEssay" :key="index">
+                <p>Câu {{ index + 1 }}: {{ item.content }}</p>
+                <div v-if="item.essays && item.essays.length">
+                  <div class="my-3" v-for="(essay, essayIndex) in item.essays" :key="essayIndex">
+                    <div
+                      class="py-2 px-4 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+                    >
+                      <label for="answer-essay" class="sr-only">Your answer</label>
+                      <textarea
+                        :value="essay.content"
+                        id="answer-essay"
+                        rows="6"
+                        class="px-0 w-full text-sm text-gray-900 border-0 focus:ring-0 focus:outline-none dark:text-white dark:placeholder-gray-400 dark:bg-gray-800"
+                        placeholder="Write your answer here..."
+                        required
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+                <div v-else>
+                  <div
+                    class="py-2 px-4 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+                  >
+                    <label for="answer-essay-{{ index }}" class="sr-only">Your answer</label>
+                    <textarea
+                      v-model="content"
+                      :id="'answer-essay' + index"
+                      rows="6"
+                      class="px-0 w-full text-sm text-gray-900 border-0 focus:ring-0 focus:outline-none dark:text-white dark:placeholder-gray-400 dark:bg-gray-800"
+                      placeholder="Write your answer here..."
+                      @change="assignmentStore.logEssay(content, item.id, assignmentId)"
+                      required
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+              <button
+                disabled
+                v-if="assignmentStore.assignmentDone[assignmentId]"
+                style="width: 210px; margin-left: 3%; margin-top: 1%"
+                type="submit"
+                class="text-white bg-slate-400 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+              >
+                Submitted
+              </button>
+
+              <button
+                v-else
+                style="width: 210px; margin-left: 3%; margin-top: 1%"
+                type="submit"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+              >
+                Submit
+              </button>
+            </form>
+          </div>
           <div v-if="assignmentStore.score">
             <div class="border-score">
               <div>
@@ -106,7 +165,7 @@
 </template>
 <script lang="ts" setup>
 import { useAssignmentStore } from '@/stores/AssignmentStore'
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -114,11 +173,19 @@ const assignmentId = Number(route.params?.assignmentId)
 
 const assignmentStore = useAssignmentStore()
 
+const content = ref('')
+
 onMounted(async () => {
   await assignmentStore.loadAssignment(assignmentId)
   await assignmentStore.loadQuestions(assignmentId)
+  await assignmentStore.loadQuestionEssay(assignmentId)
+
   await assignmentStore.loadAnswerChoices(assignmentId)
   await assignmentStore.loadScore(assignmentId)
+
+  await assignmentStore.loadEssay(assignmentId)
+
+  await assignmentStore.loadAssignmentDone(assignmentId)
 })
 </script>
 <style scoped>

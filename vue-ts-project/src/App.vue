@@ -31,10 +31,18 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import NoHeaderLayout from './components/layouts/NoHeaderLayout.vue'
 import UserLayout from './components/layouts/UserLayout.vue'
+import AdminLayout from './components/layouts/AdminLayout.vue'
 
 const route = useRoute()
 const layout = computed(() => {
-  return route.meta.layout === 'NoHeaderLayout' ? NoHeaderLayout : UserLayout
+  if (route.meta.layout === 'NoHeaderLayout') {
+    return NoHeaderLayout
+  } else if (route.meta.layout === 'AdminLayout') {
+    return AdminLayout
+  } else {
+    return UserLayout // Mặc định là layout của User
+  }
+  // return route.meta.layout === 'NoHeaderLayout' ? NoHeaderLayout : UserLayout
 })
 </script>
 

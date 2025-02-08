@@ -20,6 +20,8 @@ export const endpoints = {
   answerChoices: '/answer-choices',
   score: '/score',
 
+  essays: '/essays',
+
   enrollments: '/enrollments',
 
   comments: '/comments',
@@ -35,6 +37,10 @@ export const endpoints = {
   rating: '/rating',
 
   videoComplete: '/video-completed',
+
+  tags: '/tags',
+
+  teachers: '/teachers/all',
 }
 
 export const authAPIs = () => {

@@ -15,12 +15,32 @@ interface Assignment {
   createdDate: number
   dueDate: number
   lesson: Lesson
+  tag: Tag
 }
 
 interface Question {
   id: number
   content: string
   choices: Choice[]
+}
+
+interface Essay {
+  content: string
+  created_date: number
+  assignment_id: number
+  question_id: number
+}
+
+interface AnswerEssay {
+  content: string
+  assignment_id: number
+  question_id: number
+}
+
+interface QuestionEssay {
+  id: number
+  content: string
+  essays: Essay[]
 }
 
 interface Choice {
@@ -36,11 +56,10 @@ interface AnswerChoice {
   choice_id: number
 }
 
-// interface AssignmentDone {
-//   id: number
-//   createdDate: number
-//   assignment: Assignment
-// }
+interface Tag {
+  id: number
+  name: number
+}
 
 interface Score {
   id: number
@@ -56,12 +75,21 @@ export const useAssignmentStore = defineStore('assignmentStore', {
     assignmentDone: [] as Assignment[],
 
     questions: [] as Question[],
+    questionEssay: [] as QuestionEssay[],
+
+    essays: {} as Essay,
+    answerEssays: [] as AnswerEssay[],
 
     answerChoices: [] as AnswerChoice[],
     answers: [] as AnswerChoice[],
 
     correctAnswers: [] as Choice[],
     score: {} as Score,
+
+    // essays: [] as Essay[],
+
+    page: 0,
+    limit: 10,
   }),
   actions: {
     async loadAssignments(courseId: number) {
@@ -97,7 +125,8 @@ export const useAssignmentStore = defineStore('assignmentStore', {
       try {
         const res = await authAPIs().get(`${endpoints.assignmentDone}/assignment/${assignmentId}`)
         this.assignmentDone[assignmentId] = res.data
-        return res.data
+        // console.log(this.assignmentDone)
+        // return res.data
       } catch (err) {
         console.error(err)
       }
@@ -108,15 +137,24 @@ export const useAssignmentStore = defineStore('assignmentStore', {
         const res = await authAPIs().get(`${endpoints.questions}/assignment/${assignmentId}`)
         this.questions = res.data
         this.correctAnswers = this.questions.map((question) => {
-          // console.log(question.choices)
+          // console.log(this.questions)
           const correctChoice = question.choices.find((choice) => choice.isCorrect)
           return {
             questionId: question.id,
             correctChoice: correctChoice ? correctChoice : null,
           }
         })
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    async loadQuestionEssay(assignmentId: number) {
+      try {
+        const res = await authAPIs().get(`${endpoints.questions}/essay/assignment/${assignmentId}`)
+        this.questionEssay = res.data
+        this.essays = res.data.essays
         // console.log(res.data)
-        // console.log(this.correctAnswers)
       } catch (err) {
         console.error(err)
       }
@@ -132,7 +170,6 @@ export const useAssignmentStore = defineStore('assignmentStore', {
     },
 
     async addAnswer(assignmentId: number) {
-      // console.log(this.answers)
       try {
         await authAPIs().post(`${endpoints.answerChoices}/${assignmentId}`, this.answers)
         toast.success('Do this assignment successully!!')
@@ -161,6 +198,29 @@ export const useAssignmentStore = defineStore('assignmentStore', {
       }
     },
 
+    async addEssay(assignmentId: number) {
+      console.log(this.answerEssays)
+      // await authAPIs().post(`${endpoints.essays}`, this.answerEssays)
+      // toast.success('Do this assignment successully!!')
+      // // assignment đã hoàn thành
+      // await this.addAssignmentDone(assignmentId)
+      // // load assignment đã hoàn thành
+      // await this.loadAssignmentDone(assignmentId)
+    },
+
+    logEssay(content: string, questionId: number, assignmentId: number) {
+      const existingEssay = this.answerEssays.find((e) => e.question_id === questionId)
+      if (existingEssay) {
+        existingEssay.content = content
+      } else {
+        this.answerEssays.push({
+          content: content,
+          question_id: questionId,
+          assignment_id: assignmentId,
+        })
+      }
+    },
+
     async addScore(assignmentId: number) {
       try {
         const res = await authAPIs().post(`${endpoints.score}`, {
@@ -176,6 +236,21 @@ export const useAssignmentStore = defineStore('assignmentStore', {
       try {
         const res = await authAPIs().get(`${endpoints.score}/${assignmentId}`)
         this.score = res.data
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    async loadEssay(assignmentId: number) {
+      try {
+        const res = await authAPIs().get(`${endpoints.essays}/assignment/${assignmentId}`, {
+          params: {
+            page: this.page,
+            limit: this.limit,
+          },
+        })
+        this.essays = res.data.essays
+        // console.log(res.data.essays)
       } catch (err) {
         console.error(err)
       }

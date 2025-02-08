@@ -136,7 +136,7 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
         },
       })
       this.checkEnrollmentBoolean = res.data
-      console.log(res.data)
+      // console.log(res.data)
     },
 
     async loadCommentByLessonId(lessonId: number) {
@@ -164,7 +164,7 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
         })
         this.commentReply[commentId] = res.data.replycomments
         this.totalPagesReplyCmt = res.data.totalPages
-        console.log(res.data)
+        // console.log(res.data)
       } catch (err) {
         console.error(err)
       }
@@ -185,7 +185,7 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
           content: content,
           lesson_id: lessonId,
         })
-        console.log(res.data)
+        // console.log(res.data)
         toast.success('Comment successfully!!!')
         await this.loadCommentByLessonId(lessonId)
       } catch (err) {
@@ -199,7 +199,7 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
           content: content,
           comment_id: commentId,
         })
-        console.log(res.data)
+        // console.log(res.data)
         toast.success('reply comment successfully!!!')
         await this.loadReplyComment(commentId)
       } catch (err) {
@@ -231,7 +231,7 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
       try {
         const res = await authAPIs().get(`${endpoints.rating}/${courseId}/count`)
         this.countRatingAll = res.data
-        console.log(res.data)
+        // console.log(res.data)
       } catch (err) {
         console.error(err)
       }
@@ -243,7 +243,7 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
       try {
         const res = await authAPIs().get(`${endpoints.rating}/${courseId}/rating/${rate}`)
         this.averagePerRate[rate] = res.data
-        console.log('rating: ' + rate + ' ~%:  ' + res.data)
+        // console.log('rating: ' + rate + ' ~%:  ' + res.data)
       } catch (err) {
         console.error(err)
       }
@@ -254,7 +254,7 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
       try {
         const res = await authAPIs().get(`${endpoints.rating}/${courseId}/rate/${rate}`)
         this.countPerRate[rate] = res.data
-        console.log('rate: ' + rate + ': ' + res.data)
+        // console.log('rate: ' + rate + ': ' + res.data)
       } catch (err) {
         console.error(err)
       }
@@ -271,7 +271,7 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
         this.review = res.data.ratings
         this.totalPagesReview = res.data.totalPages
 
-        console.log(res.data)
+        // console.log(res.data)
       } catch (err) {
         console.error(err)
       }
@@ -284,7 +284,7 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
           rating: rating,
           course_id: courseId,
         })
-        console.log(res.data)
+        // console.log(res.data)
         await this.loadReviews(courseId)
         toast.success('Review course Successfully!!')
       } catch (err) {

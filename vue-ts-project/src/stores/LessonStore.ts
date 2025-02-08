@@ -6,6 +6,7 @@ interface Lesson {
   name: string
   description: string
   videos: Video[]
+  course: Course
 }
 
 interface Video {
@@ -27,6 +28,16 @@ interface Assignment {
   }
 }
 
+interface Course {
+  id: number
+  name: string
+  image: string
+  description: string
+  price: number
+  discount: number
+  isActive: boolean
+}
+
 export const useLessonStore = defineStore('lessonStore', {
   state: () => ({
     lesson: {} as Lesson,
@@ -37,14 +48,51 @@ export const useLessonStore = defineStore('lessonStore', {
     lessonsByCourseId: {} as Lesson[],
     videoUrl: '',
     currentVideoId: 0,
+
+    totalPages: 0,
+    page: 0,
+    limit: 6,
+    lessonList: [] as Lesson[],
+    countVideo: {} as Record<number, number>,
   }),
 
   actions: {
+    async loadAllLessons() {
+      try {
+        const res = await authAPIs().get(endpoints.lessons, {
+          params: {
+            page: this.page,
+            limit: this.limit,
+          },
+        })
+        this.lessonList = res.data.lessons
+        this.totalPages = res.data.totalPages
+        console.log(res.data.lessons)
+
+        const countPromise = this.lessonList.map((lesson) => this.loadVideos(lesson.id))
+        await Promise.all(countPromise)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    async changePage(newPage: number) {
+      if (newPage >= 0 && newPage < this.totalPages) {
+        this.page = newPage
+        await this.loadAllLessons()
+      }
+    },
+
     async loadVideos(lessonId: number) {
       try {
         const res = await authAPIs().get(`${endpoints.videos}/count/lesson/${lessonId}`)
         this.totalVideo = res.data
         console.log(res.data)
+        this.countVideo = {
+          ...this.countVideo,
+          [lessonId]: res.data,
+        }
+        console.log('count video: lessonid: ' + lessonId + ' video:' + this.countVideo[lessonId])
       } catch (err) {
         console.error(err)
       }

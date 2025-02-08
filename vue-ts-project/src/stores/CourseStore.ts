@@ -8,32 +8,40 @@ interface Course {
   description: string
   price: number
   discount: number
-  teacher: {
-    user: {
-      username: string
-      avatar: string
-    }
+  teacher: Teacher
+  isActive: boolean
+  category: Category
+  tag: Tag
+}
+
+interface Teacher {
+  id: number
+  user: {
+    username: string
+    avatar: string
+    firstName: string
+    lastName: string
   }
+  position: string
+  description: string
+}
+
+interface Category {
+  id: number
+  name: string
+}
+
+interface Tag {
+  id: number
+  name: string
 }
 
 export const useCourseStore = defineStore('courseStore', {
   state: () => ({
-    categories: [] as Array<{ id: number; name: string }>,
-    courses: [] as Array<{
-      id: number
-      name: string
-      image: string
-      description: string
-      price: number
-      discount: number
-      teacher: {
-        position: string
-        description: string
-        user: {
-          username: string
-        }
-      }
-    }>,
+    categories: [] as Category[],
+    tags: [] as Tag[],
+    teachers: [] as Teacher[],
+    courses: [] as Course[],
 
     course: {} as Course,
     totalPages: 0,
@@ -45,6 +53,10 @@ export const useCourseStore = defineStore('courseStore', {
     countLesson: {} as Record<number, number>,
     countEnrolled: {} as Record<number, number>,
     courseErolled: [],
+
+    category: {} as Category,
+    tag: {} as Tag,
+    teacher: {} as Teacher,
   }),
 
   actions: {
@@ -54,6 +66,24 @@ export const useCourseStore = defineStore('courseStore', {
         this.categories = res.data
       } catch (error) {
         console.error(error)
+      }
+    },
+
+    async loadTags() {
+      try {
+        const res = await authAPIs().get(endpoints.tags)
+        this.tags = res.data
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    async loadTeachers() {
+      try {
+        const res = await authAPIs().get(endpoints.teachers)
+        this.teachers = res.data
+      } catch (err) {
+        console.error(err)
       }
     },
 
@@ -68,6 +98,25 @@ export const useCourseStore = defineStore('courseStore', {
           },
         )
         this.courseErolled = res.data
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    async loadCourseAdmin() {
+      try {
+        const res = await APIs.get(`${endpoints.courses}/filter-cate`, {
+          params: {
+            categoryId: this.cateFilter,
+            page: this.page,
+            limit: this.limit,
+          },
+        })
+        this.courses = res.data.courses
+        this.totalPages = res.data.totalPages
+
+        const countPromise = this.courses.map((course) => this.countLessons(course.id))
+        await Promise.all(countPromise)
       } catch (err) {
         console.error(err)
       }
@@ -149,7 +198,19 @@ export const useCourseStore = defineStore('courseStore', {
       try {
         const res = await APIs.get(`${endpoints.courses}/${courseId}`)
         this.course = res.data
-        // console.log(res.data)
+        this.category = res.data.category
+        this.tag = res.data.tag
+        this.teacher = res.data.teacher
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    async deleteCourse(courseId: number) {
+      try {
+        await authAPIs().delete(`${endpoints.courses}/${courseId}`)
+        console.log('delete successful')
+        await this.loadCourses()
       } catch (err) {
         console.error(err)
       }

@@ -107,6 +107,39 @@ const router = createRouter({
       name: 'assignment-essay',
       component: () => import('../views/assignment/AssignmentEssay.vue'),
     },
+
+    // ROUTER FOR ADMIN
+
+    {
+      path: '/admin',
+      meta: { requiresAuth: true, role: 'ADMIN' },
+      name: 'admin-layout',
+      component: () => import('../components/layouts/AdminLayout.vue'),
+    },
+    {
+      path: '/admin/course-list-admin',
+      meta: { requiresAuth: true, role: 'ADMIN', layout: 'AdminLayout' },
+      name: 'course-list-admin',
+      component: () => import('../views/admin/course/CourseListAdmin.vue'),
+    },
+    {
+      path: '/admin/course-create-admin',
+      meta: { requiresAuth: true, role: 'ADMIN', layout: 'AdminLayout' },
+      name: 'course-create-admin',
+      component: () => import('../views/admin/course/CourseCreateAdmin.vue'),
+    },
+    {
+      path: '/admin/course-update-admin/:courseId',
+      meta: { requiresAuth: true, role: 'ADMIN', layout: 'AdminLayout' },
+      name: 'course-update-admin',
+      component: () => import('../views/admin/course/CourseUpdateAdmin.vue'),
+    },
+    {
+      path: '/admin/lesson-list-admin',
+      meta: { requiresAuth: true, role: 'ADMIN', layout: 'AdminLayout' },
+      name: 'lesson-list-admin',
+      component: () => import('../views/admin/lesson/LessonListAdmin.vue'),
+    },
   ],
 })
 
