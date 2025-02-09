@@ -140,6 +140,18 @@ const router = createRouter({
       name: 'lesson-list-admin',
       component: () => import('../views/admin/lesson/LessonListAdmin.vue'),
     },
+    {
+      path: '/admin/lesson-create-admin/by-course/:courseId',
+      meta: { requiresAuth: true, role: 'ADMIN', layout: 'AdminLayout' },
+      name: 'lesson-create-admin',
+      component: () => import('../views/admin/lesson/LessonCreateAdmin.vue'),
+    },
+    {
+      path: '/admin/lesson-update-admin/:lessonId',
+      meta: { requiresAuth: true, role: 'ADMIN', layout: 'AdminLayout' },
+      name: 'lesson-update-admin',
+      component: () => import('../views/admin/lesson/LessonUpdateAdmin.vue'),
+    },
   ],
 })
 

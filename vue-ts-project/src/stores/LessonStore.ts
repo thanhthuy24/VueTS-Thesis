@@ -7,6 +7,7 @@ interface Lesson {
   description: string
   videos: Video[]
   course: Course
+  isActive: boolean
 }
 
 interface Video {
@@ -49,11 +50,17 @@ export const useLessonStore = defineStore('lessonStore', {
     videoUrl: '',
     currentVideoId: 0,
 
+    // Lesson Admin
     totalPages: 0,
     page: 0,
-    limit: 6,
+    limit: 5,
     lessonList: [] as Lesson[],
+    sortBy: 'id',
+    order: 'asc',
+    keyword: '',
     countVideo: {} as Record<number, number>,
+
+    listVideos: [] as Video[],
   }),
 
   actions: {
@@ -63,17 +70,35 @@ export const useLessonStore = defineStore('lessonStore', {
           params: {
             page: this.page,
             limit: this.limit,
+            sortBy: this.sortBy,
+            order: this.order,
+            keyword: this.keyword,
           },
         })
         this.lessonList = res.data.lessons
         this.totalPages = res.data.totalPages
-        console.log(res.data.lessons)
+        console.log(res.data)
 
         const countPromise = this.lessonList.map((lesson) => this.loadVideos(lesson.id))
         await Promise.all(countPromise)
       } catch (err) {
         console.error(err)
       }
+    },
+
+    async changeSort(field: string) {
+      if (this.sortBy === field) {
+        this.order = this.order === 'asc' ? 'desc' : 'asc' // Đảo hướng nếu cùng field
+      } else {
+        this.sortBy = field
+        this.order = 'asc' // Reset về tăng dần khi đổi field
+      }
+      await this.loadAllLessons()
+    },
+
+    async search(keyword: string) {
+      this.keyword = keyword
+      await this.loadAllLessons()
     },
 
     async changePage(newPage: number) {
@@ -98,12 +123,20 @@ export const useLessonStore = defineStore('lessonStore', {
       }
     },
 
+    async loadListVideosByLessonId(lessonId: number) {
+      try {
+        const res = await authAPIs().get(`${endpoints.videos}/lesson/${lessonId}`)
+        this.listVideos = res.data
+        console.log(res.data)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
     async loadLesson(courseId: number) {
       try {
         const res = await APIs.get(`${endpoints.lessons}/get-first-lesson/course/${courseId}`)
         this.lesson = res.data
-        // console.log('lessons')
-        // console.log(res.data)
       } catch (err) {
         console.error(err)
       }
@@ -115,6 +148,16 @@ export const useLessonStore = defineStore('lessonStore', {
         this.lessonsByCourseId = res.data
         // console.log('lessons by courseId')
         // console.log(res.data)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    async loadLessonById(lessonId: number) {
+      try {
+        const res = await authAPIs().get(`${endpoints.lessons}/auth/${lessonId}`)
+        this.lesson = res.data
+        console.log(res.data)
       } catch (err) {
         console.error(err)
       }
@@ -146,6 +189,15 @@ export const useLessonStore = defineStore('lessonStore', {
           video_id: videoId,
         })
         console.log('Save video successfull')
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    async deleteLesson(lessonId: number) {
+      try {
+        await authAPIs().delete(`${endpoints.lessons}/${lessonId}`)
+        await this.loadAllLessons()
       } catch (err) {
         console.error(err)
       }

@@ -206,7 +206,7 @@ const createCourse = async () => {
 
   let discountFloat = 0.0
   if (discountFloat != null) {
-    const parsedValue = parseFloat(q.value?.toString() || '')
+    const parsedValue = parseFloat(discount.value?.toString() || '')
     if (!isNaN(parsedValue)) {
       discountFloat = parsedValue
     }

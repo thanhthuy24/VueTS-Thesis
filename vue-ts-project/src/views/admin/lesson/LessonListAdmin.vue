@@ -2,8 +2,8 @@
   <main>
     <div class="flex justify-between">
       <h1 class="mt-5 font-large">Lesson</h1>
-      <div class="mt-3">
-        <router-link to="/admin/course-create-admin">
+      <!-- <div class="mt-3">
+        <router-link to="/admin/lesson-create-admin">
           <button
             type="button"
             class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
@@ -11,7 +11,7 @@
             Add lesson
           </button>
         </router-link>
-      </div>
+      </div> -->
     </div>
     <div>
       <h1>Let's check your update today!!</h1>
@@ -40,6 +40,8 @@
             </svg>
           </div>
           <input
+            v-model="searchKeyword"
+            @input="lessonStore.search(searchKeyword)"
             type="text"
             id="table-search"
             class="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -49,22 +51,50 @@
       </div>
       <div>
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-          <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+          <table
+            id="filter-table"
+            class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
+          >
             <thead
               class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
             >
               <tr>
-                <th scope="col" style="padding: 11px 20px" class="px-6 py-3">
-                  <span class="flex items-center"> ID </span>
+                <th
+                  class="px-6 py-3 items-center space-x-2 cursor-pointer"
+                  @click="lessonStore.changeSort('id')"
+                >
+                  <span>ID</span>
+                  <span v-if="lessonStore.sortBy === 'id'">
+                    {{ lessonStore.order === 'asc' ? '⬆' : '⬇' }}
+                  </span>
                 </th>
-                <th scope="col" style="padding: 11px 20px" class="px-6 py-3">
-                  <span class="flex items-center"> Lesson's name </span>
+
+                <th
+                  class="px-6 py-3 items-center space-x-2 cursor-pointer"
+                  @click="lessonStore.changeSort('name')"
+                >
+                  <span>Name</span>
+                  <span v-if="lessonStore.sortBy === 'name'">
+                    {{ lessonStore.order === 'asc' ? '⬆' : '⬇' }}
+                  </span>
                 </th>
-                <th scope="col" style="padding: 11px 20px" class="px-6 py-3">
-                  <span class="flex items-center"> Course's ID </span>
+                <th
+                  class="px-6 py-3 items-center space-x-2 cursor-pointer"
+                  @click="lessonStore.changeSort('courseId')"
+                >
+                  <span> Course </span>
+                  <span v-if="lessonStore.sortBy === 'courseId'">{{
+                    lessonStore.order === 'asc' ? '⬆' : '⬇'
+                  }}</span>
                 </th>
-                <th scope="col" style="padding: 11px 20px" class="px-6 py-3">
-                  <span class="flex items-center"> Videos </span>
+                <th
+                  class="px-6 py-3 items-center space-x-2 cursor-pointer"
+                  @click="lessonStore.changeSort('videos')"
+                >
+                  <span> Videos </span>
+                  <span v-if="lessonStore.sortBy === 'videos'">{{
+                    lessonStore.order === 'asc' ? '⬆' : '⬇'
+                  }}</span>
                 </th>
                 <th scope="col" style="padding: 11px 20px" class="px-6 py-3">
                   <span class="flex items-center"> Status </span>
@@ -91,26 +121,24 @@
                   {{ item.name }}
                 </td>
                 <td style="padding: 11px 20px" class="px-6 py-4">
-                  {{ item.course?.id }}
+                  {{ item.course?.name }}
                 </td>
                 <td style="padding: 11px 20px" class="px-6 py-4">
-                  <!-- 555 -->
                   {{ lessonStore.countVideo[item.id] }}
                 </td>
                 <td style="padding: 11px 20px" class="px-6 py-4">
-                  <!-- 5454 -->
-                  <!-- <span
+                  <span
                     style="font-weight: bold"
                     :class="item.isActive ? 'text-green-500' : 'text-red-500'"
                   >
                     {{ item.isActive ? 'Active' : 'Inactice' }}
-                  </span> -->
+                  </span>
                 </td>
                 <td
                   scope="row"
                   class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
-                  <RouterLink :to="{ name: 'course-update-admin', params: { courseId: item.id } }">
+                  <RouterLink :to="{ name: 'lesson-update-admin', params: { lessonId: item.id } }">
                     <button class="mr-3 style-icon-actions" style="background-color: #f7e8f6">
                       <svg
                         style="margin-left: 2.5px"
@@ -138,8 +166,8 @@
                     @click="openModal(item.id)"
                     class="style-icon-actions"
                     id="button"
-                    :data-modal-toggle="`popup-modal-${selectedCourseId}`"
-                    :data-modal-target="`popup-modal-${selectedCourseId}`"
+                    :data-modal-toggle="`popup-modal-${selectedLessonId}`"
+                    :data-modal-target="`popup-modal-${selectedLessonId}`"
                     type="button"
                   >
                     <svg
@@ -163,7 +191,6 @@
                   </button>
                 </td>
               </tr>
-              <!-- </template> -->
             </tbody>
           </table>
           <div
@@ -221,8 +248,8 @@
                     It's delete all lessons, videos and assignments too!!
                   </p>
                   <button
-                    @click="deleteCourse"
-                    :data-modal-hide="`popup-modal-${selectedCourseId}`"
+                    @click="deleteLesson"
+                    :data-modal-hide="`popup-modal-${selectedLessonId}`"
                     type="button"
                     class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
                   >
@@ -230,7 +257,7 @@
                   </button>
                   <button
                     @click="closeModal"
-                    :data-modal-hide="`popup-modal-${selectedCourseId}`"
+                    :data-modal-hide="`popup-modal-${selectedLessonId}`"
                     type="button"
                     class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                   >
@@ -254,12 +281,45 @@
 <script lang="ts" setup>
 import { useLessonStore } from '@/stores/LessonStore'
 import PaginationLayout from '@/views/pagination/PaginationLayout.vue'
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const lessonStore = useLessonStore()
+
+const searchKeyword = ref<string | ''>('')
+
 const handlePageChange = async (newPage: number) => {
   await lessonStore.changePage(newPage)
 }
+
+const selectedLessonId = ref<number | null>(null)
+const openModal = (id: number) => {
+  selectedLessonId.value = id
+
+  // Đảm bảo modal có tồn tại trước khi hiển thị
+  const modal = document.getElementById(`popup-modal-${id}`)
+  if (modal) {
+    modal.classList.remove('hidden') // Nếu dùng Tailwind
+  }
+}
+
+const closeModal = () => {
+  if (selectedLessonId.value !== null) {
+    const modal = document.getElementById(`popup-modal-${selectedLessonId.value}`)
+    if (modal) {
+      modal.classList.add('hidden') // Nếu dùng Tailwind
+    }
+    selectedLessonId.value = null // Reset lại sau khi đóng modal
+  }
+}
+
+const deleteLesson = async () => {
+  if (selectedLessonId.value !== null) {
+    console.log(`Deleting course ID: ${selectedLessonId.value}`)
+    await lessonStore.deleteLesson(selectedLessonId.value)
+    closeModal()
+  }
+}
+
 onMounted(async () => {
   await lessonStore.loadAllLessons()
 })

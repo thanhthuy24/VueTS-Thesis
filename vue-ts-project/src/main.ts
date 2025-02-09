@@ -11,6 +11,8 @@ import { useLoginStore } from './stores/LoginStore'
 import { useCartStore } from './stores/CartStore'
 import 'vue-toastification/dist/index.css'
 import Toast, { type PluginOptions } from 'vue-toastification'
+import 'simple-datatables/dist/style.css'
+import { DataTable } from 'simple-datatables'
 
 const app = createApp(App)
 
@@ -37,7 +39,7 @@ const options: PluginOptions = {
   icon: true,
   rtl: false,
 }
-
+app.config.globalProperties.$DataTable = DataTable
 app.use(Toast, options)
 
 app.mount('#app')
