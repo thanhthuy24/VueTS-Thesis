@@ -80,21 +80,15 @@
                 </th>
                 <th
                   class="px-6 py-3 items-center space-x-2 cursor-pointer"
-                  @click="lessonStore.changeSort('courseId')"
+                  @click="lessonStore.changeSort('course.id')"
                 >
                   <span> Course </span>
-                  <span v-if="lessonStore.sortBy === 'courseId'">{{
+                  <span v-if="lessonStore.sortBy === 'course.id'">{{
                     lessonStore.order === 'asc' ? '⬆' : '⬇'
                   }}</span>
                 </th>
-                <th
-                  class="px-6 py-3 items-center space-x-2 cursor-pointer"
-                  @click="lessonStore.changeSort('videos')"
-                >
+                <th class="px-6 py-3 items-center space-x-2 cursor-pointer">
                   <span> Videos </span>
-                  <span v-if="lessonStore.sortBy === 'videos'">{{
-                    lessonStore.order === 'asc' ? '⬆' : '⬇'
-                  }}</span>
                 </th>
                 <th scope="col" style="padding: 11px 20px" class="px-6 py-3">
                   <span class="flex items-center"> Status </span>

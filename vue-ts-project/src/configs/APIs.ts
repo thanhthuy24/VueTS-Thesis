@@ -33,6 +33,8 @@ export const endpoints = {
 
   payment: '/payment',
   paypal: '/paypal',
+  receiptDetail: '/receipt_details',
+  receipt: '/receipts',
 
   rating: '/rating',
 

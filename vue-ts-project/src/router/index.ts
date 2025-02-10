@@ -152,6 +152,12 @@ const router = createRouter({
       name: 'lesson-update-admin',
       component: () => import('../views/admin/lesson/LessonUpdateAdmin.vue'),
     },
+    {
+      path: '/admin/transaction-list-admin',
+      meta: { requiresAuth: true, role: 'ADMIN', layout: 'AdminLayout' },
+      name: 'transaction-list-admin',
+      component: () => import('../views/admin/transaction/TransactionList.vue'),
+    },
   ],
 })
 
