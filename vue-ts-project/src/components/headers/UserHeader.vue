@@ -230,7 +230,7 @@
           <span class="sr-only">Open user menu</span>
           <img
             class="w-8 h-8 rounded-full"
-            :src="loginStore.currentUser?.avatar"
+            :src="loginStore.currentUser?.avatar || '@/assets/default-avatar.jpg'"
             alt="user photo"
           />
         </button>

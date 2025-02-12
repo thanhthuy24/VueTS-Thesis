@@ -20,6 +20,14 @@ const router = createRouter({
       component: () => import('@/views/login/UserLogin.vue'),
     },
     {
+      path: '/register-account',
+      name: 'register-account',
+      meta: {
+        layout: 'NoHeaderLayout',
+      },
+      component: () => import('@/views/login/UserRegister.vue'),
+    },
+    {
       path: '/about',
       name: 'about',
       component: () => import('../views/AboutView.vue'),
@@ -153,10 +161,28 @@ const router = createRouter({
       component: () => import('../views/admin/lesson/LessonUpdateAdmin.vue'),
     },
     {
+      path: '/admin/register-list-admin',
+      meta: { requiresAuth: true, role: 'ADMIN', layout: 'AdminLayout' },
+      name: 'register-list-admin',
+      component: () => import('../views/admin/register/RegisterFormList.vue'),
+    },
+    {
       path: '/admin/transaction-list-admin',
       meta: { requiresAuth: true, role: 'ADMIN', layout: 'AdminLayout' },
       name: 'transaction-list-admin',
       component: () => import('../views/admin/transaction/TransactionList.vue'),
+    },
+    {
+      path: '/admin/user-list-admin',
+      meta: { requiresAuth: true, role: 'ADMIN', layout: 'AdminLayout' },
+      name: 'user-list-admin',
+      component: () => import('../views/admin/user/UserListAdmin.vue'),
+    },
+    {
+      path: '/admin/user-detail-admin/:userId',
+      meta: { requiresAuth: true, role: 'ADMIN', layout: 'AdminLayout' },
+      name: 'user-detail-admin',
+      component: () => import('../views/admin/user/UserDetailAdmin.vue'),
     },
   ],
 })

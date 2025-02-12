@@ -67,7 +67,7 @@ export const useLoginStore = defineStore('loginStore', {
         localStorage.setItem('role', this.role)
 
         if (this.role === 'ADMIN') {
-          router.push('/about') // Chuyển hướng đến trang Admin
+          router.push('/admin') // Chuyển hướng đến trang Admin
         } else if (this.role === 'USER') {
           router.push('/home') // Chuyển hướng đến trang User
         } else {

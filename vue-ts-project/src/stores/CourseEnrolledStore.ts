@@ -71,10 +71,19 @@ interface Review {
   comment: string
 }
 
+interface Progress {
+  id: number
+  completionPercentage: number
+  status: string
+  updatedDate: number
+  course: Course
+  user: User
+}
+
 export const useCourseEnrolled = defineStore('courseEnrolled', {
   state: () => ({
     courseList: [] as Enrollment[],
-    progress: [],
+    progress: [] as Progress[],
     checkCourseEnrolledBoolean: false as boolean,
     checkEnrollmentBoolean: false as boolean,
 
@@ -103,6 +112,13 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
     countPerRate: [],
 
     review: [] as Review[],
+
+    listCourseEnrolled: [] as Enrollment[],
+    // progressList de xem % hoan thanh cua tung khoa hoc
+    progressList: [] as Progress[],
+
+    // progressStatus de xem trang thai hoan thanh cua tung khoa hoc
+    progressStatus: [] as Progress[],
   }),
   actions: {
     async loadCourseList() {
@@ -137,6 +153,16 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
       })
       this.checkEnrollmentBoolean = res.data
       // console.log(res.data)
+    },
+
+    async loadCoursesEnrolled(userId: number) {
+      try {
+        const res = await authAPIs().get(`${endpoints.enrollments}/get-courses/${userId}`)
+        this.listCourseEnrolled = res.data
+        console.log(res.data)
+      } catch (err) {
+        console.error(err)
+      }
     },
 
     async loadCommentByLessonId(lessonId: number) {
@@ -181,7 +207,7 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
 
     async addComment(lessonId: number, content: string) {
       try {
-        const res = await authAPIs().post(`${endpoints.comments}`, {
+        await authAPIs().post(`${endpoints.comments}`, {
           content: content,
           lesson_id: lessonId,
         })
@@ -195,7 +221,7 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
 
     async addReplyComment(commentId: number, content: string) {
       try {
-        const res = await authAPIs().post(`${endpoints.replyComment}`, {
+        await authAPIs().post(`${endpoints.replyComment}`, {
           content: content,
           comment_id: commentId,
         })
@@ -207,11 +233,31 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
       }
     },
 
+    async loadProgressByAdmin(userId: number, courseId: number) {
+      try {
+        const res = await authAPIs().get(`${endpoints.progress}/user/${userId}/course/${courseId}`)
+        this.progressList[courseId] = res.data.completionPercentage
+        this.progressStatus[courseId] = res.data.status
+        console.log(courseId + ': ' + this.progressList[courseId])
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    async loadProgressByUser(courseId: number) {
+      try {
+        const res = await authAPIs().get(`${endpoints.progress}/get-progress/${courseId}`)
+        this.progress[courseId] = res.data.completionPercentage
+        console.log(courseId + ': ' + this.progress[courseId])
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
     async loadProcess(courseId: number) {
       try {
-        const res = await authAPIs().post(`${endpoints.progress}/course/${courseId}`)
-        this.progress[courseId] = res.data
-        return res.data
+        await authAPIs().post(`${endpoints.progress}/course/${courseId}`)
+        // this.progress[courseId] = res.data.completionPercentage
       } catch (err) {
         console.error(err)
       }

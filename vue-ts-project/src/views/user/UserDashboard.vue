@@ -245,7 +245,7 @@
                   >Phone number</label
                 >
                 <input
-                  type="number"
+                  type="text"
                   name="phoneNumber"
                   id="phoneNumber"
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
@@ -290,7 +290,7 @@
 </template>
 <script setup lang="ts">
 import { useLoginStore } from '@/stores/LoginStore'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import Datepicker from 'vue3-datepicker'
 import 'filepond/dist/filepond.min.css'
 import vueFilePond from 'vue-filepond'
@@ -372,6 +372,10 @@ const handleChangePassword = () => {
     console.error('oldPassword or newPassword or retypePassword is missing')
   }
 }
+
+onMounted(async () => {
+  // console.log(loginStore.currentUser)
+})
 </script>
 <style scoped>
 .flex-container {

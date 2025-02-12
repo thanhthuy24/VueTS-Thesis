@@ -30,6 +30,8 @@ export const useRegisterFormStore = defineStore('registerFormStore', {
   state: () => ({
     form: {} as Form,
     listForm: [] as Form[],
+
+    allFormAdmin: [] as Form[],
   }),
   actions: {
     async registerForm(position: string, reason: string) {
@@ -51,6 +53,16 @@ export const useRegisterFormStore = defineStore('registerFormStore', {
       try {
         const res = await authAPIs().get(`${endpoints.register}/list-form/user`)
         this.listForm = res.data
+        console.log(res.data)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    async loadRegisterFormAdmin() {
+      try {
+        const res = await authAPIs().get(`${endpoints.register}`)
+        this.allFormAdmin = res.data
         console.log(res.data)
       } catch (err) {
         console.error(err)

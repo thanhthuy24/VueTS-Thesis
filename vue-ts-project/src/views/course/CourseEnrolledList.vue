@@ -40,10 +40,12 @@
               <div
                 class="bg-blue-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full"
                 :style="{
-                  width: progress[item.course.id] ? progress[item.course.id] + '%' : '5%',
+                  width: courseEnrolled.progress[item.course.id]
+                    ? courseEnrolled.progress[item.course.id] + '%'
+                    : '5%',
                 }"
               >
-                {{ progress[item.course.id] }}%
+                {{ courseEnrolled.progress[item.course.id] }}%
               </div>
             </div>
           </div>
@@ -73,8 +75,7 @@ onMounted(async () => {
   await courseEnrolled.loadCourseList()
 
   for (const course of courseEnrolled.courseList) {
-    const res = await courseEnrolled.loadProcess(course.course.id)
-    progress.value[course.course.id] = res
+    await courseEnrolled.loadProgressByUser(course.course.id)
   }
 })
 </script>
