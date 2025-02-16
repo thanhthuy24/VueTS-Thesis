@@ -4,6 +4,7 @@ const BASE_URL = 'http://localhost:8080/api/'
 
 export const endpoints = {
   user: '/users',
+  role: '/roles',
   login: '/users/login',
   currentUser: '/users/current-user',
 
@@ -43,6 +44,12 @@ export const endpoints = {
   tags: '/tags',
 
   teachers: '/teachers/all',
+  courseTeacher: '/course-teacher',
+
+  teacher: '/teachers',
+  email: '/email',
+
+  notifications: '/notifications',
 }
 
 export const authAPIs = () => {

@@ -57,6 +57,9 @@ export const useCourseStore = defineStore('courseStore', {
     category: {} as Category,
     tag: {} as Tag,
     teacher: {} as Teacher,
+
+    coursesForTeacher: [] as Course[],
+    totalPagesTeacher: 0,
   }),
 
   actions: {
@@ -213,6 +216,29 @@ export const useCourseStore = defineStore('courseStore', {
         await this.loadCourses()
       } catch (err) {
         console.error(err)
+      }
+    },
+
+    async loadCoursesForTeacher(teacherId: number) {
+      try {
+        const res = await authAPIs().get(`${endpoints.courseTeacher}/${teacherId}`, {
+          params: {
+            page: this.page,
+            limit: this.limit,
+          },
+        })
+        this.coursesForTeacher = res.data.courses
+        this.totalPagesTeacher = res.data.totalPages
+        console.log(res.data)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    async changePageCourseTeacher(newPage: number, teacherId: number) {
+      if (newPage >= 0 && newPage < this.totalPagesTeacher) {
+        this.page = newPage
+        await this.loadCoursesForTeacher(teacherId)
       }
     },
 

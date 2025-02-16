@@ -24,6 +24,7 @@
     "dayjs": "^1.11.13",
     "filepond": "^4.32.7",
     "filepond-plugin-image-preview": "^4.6.12",
+    "firebase": "^11.3.1",
     "flowbite": "^2.5.2",
     "pinia": "^2.2.6",
     "simple-datatables": "^9.2.2",

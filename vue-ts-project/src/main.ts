@@ -14,6 +14,8 @@ import Toast, { type PluginOptions } from 'vue-toastification'
 import 'simple-datatables/dist/style.css'
 import { DataTable } from 'simple-datatables'
 
+import { requestForToken } from '@/firebase/firebase.ts'
+
 const app = createApp(App)
 
 app.use(createPinia())
@@ -41,6 +43,18 @@ const options: PluginOptions = {
 }
 app.config.globalProperties.$DataTable = DataTable
 app.use(Toast, options)
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker
+    .register('/firebase-messaging-sw.js')
+    .then((registration) => {
+      console.log('Service Worker registered with scope:', registration.scope)
+      requestForToken()
+    })
+    .catch((error) => {
+      console.error('Service Worker registration failed:', error)
+    })
+}
 
 app.mount('#app')
 nextTick(() => {

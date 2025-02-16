@@ -32,6 +32,18 @@ import { useRoute } from 'vue-router'
 import NoHeaderLayout from './components/layouts/NoHeaderLayout.vue'
 import UserLayout from './components/layouts/UserLayout.vue'
 import AdminLayout from './components/layouts/AdminLayout.vue'
+import TeacherLayoutCourse from './components/layouts/TeacherLayoutCourse.vue'
+
+import { onMounted } from 'vue'
+import { onMessageListener, requestForToken } from '@/firebase/firebase'
+
+onMounted(async () => {
+  await requestForToken()
+
+  onMessageListener().then((payload) => {
+    console.log('Foreground message received:', payload)
+  })
+})
 
 const route = useRoute()
 const layout = computed(() => {
@@ -39,6 +51,8 @@ const layout = computed(() => {
     return NoHeaderLayout
   } else if (route.meta.layout === 'AdminLayout') {
     return AdminLayout
+  } else if (route.meta.layout === 'TeacherLayoutCourse') {
+    return TeacherLayoutCourse
   } else {
     return UserLayout // Mặc định là layout của User
   }

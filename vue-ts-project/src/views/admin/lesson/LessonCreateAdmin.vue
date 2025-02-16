@@ -53,25 +53,6 @@
                 placeholder="Your description here"
               ></textarea>
             </div>
-            <!-- <div class="mb-5 mr-5 mt-5">
-              <label
-                class="block mb-3 mt-5 text-sm font-medium text-gray-900 dark:text-white"
-                for="image"
-                >List Videos: <span style="color: red">*</span></label
-              >
-              <div class="flex" style="display: flex; flex-wrap: wrap; gap: 10px">
-                <video
-                  v-for="(item, id) in videos"
-                  :key="id"
-                  style="width: 280px; height: 180px; flex: 0 0 calc(33.33% - 10px)"
-                  class="mr-5"
-                  controls
-                >
-                  <source :src="item.name" type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-              </div>
-            </div> -->
             <div class="my-5">
               <label
                 for="file-upload"

@@ -70,6 +70,8 @@ export const useLoginStore = defineStore('loginStore', {
           router.push('/admin') // Chuyển hướng đến trang Admin
         } else if (this.role === 'USER') {
           router.push('/home') // Chuyển hướng đến trang User
+        } else if (this.role === 'TEACHER') {
+          router.push('/teacher')
         } else {
           router.push('/login') // Chuyển hướng mặc định
         }

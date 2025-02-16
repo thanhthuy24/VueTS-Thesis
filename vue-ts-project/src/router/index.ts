@@ -167,6 +167,12 @@ const router = createRouter({
       component: () => import('../views/admin/register/RegisterFormList.vue'),
     },
     {
+      path: '/admin/register-detail-admin/:registerId',
+      meta: { requiresAuth: true, role: 'ADMIN', layout: 'AdminLayout' },
+      name: 'register-detail-admin',
+      component: () => import('../views/admin/register/RegisterFormDetail.vue'),
+    },
+    {
       path: '/admin/transaction-list-admin',
       meta: { requiresAuth: true, role: 'ADMIN', layout: 'AdminLayout' },
       name: 'transaction-list-admin',
@@ -183,6 +189,38 @@ const router = createRouter({
       meta: { requiresAuth: true, role: 'ADMIN', layout: 'AdminLayout' },
       name: 'user-detail-admin',
       component: () => import('../views/admin/user/UserDetailAdmin.vue'),
+    },
+    {
+      path: '/admin/create-account',
+      meta: { requiresAuth: true, role: 'ADMIN', layout: 'AdminLayout' },
+      name: 'create-account',
+      component: () => import('../views/admin/register/CreateAccount.vue'),
+    },
+    {
+      path: '/admin/teacher-list-admin',
+      meta: { requiresAuth: true, role: 'ADMIN', layout: 'AdminLayout' },
+      name: 'teacher-list-admin',
+      component: () => import('../views/admin/teacher/TeacherListAdmin.vue'),
+    },
+
+    // LAYOUT FOR TEACHER
+    {
+      path: '/teacher',
+      meta: { requiresAuth: true, role: 'TEACHER', layout: 'NoHeaderLayout' },
+      name: 'teacher-layout',
+      component: () => import('../components/layouts/TeacherLayout.vue'),
+    },
+    {
+      path: '/teacher/teacher-layout-course/:courseId',
+      meta: { requiresAuth: true, role: 'TEACHER' },
+      name: 'teacher-layout-course',
+      component: () => import('../components/layouts/TeacherLayoutCourse.vue'),
+    },
+    {
+      path: '/teacher/course-detail-teacher/:courseId',
+      meta: { requiresAuth: true, role: 'TEACHER', layout: 'TeacherLayoutCourse' },
+      name: 'course-detail-teacher',
+      component: () => import('../views/teacher/courses/CousesDetailTeacher.vue'),
     },
   ],
 })

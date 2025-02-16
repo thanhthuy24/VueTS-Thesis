@@ -1,12 +1,54 @@
 <template>
   <main>
     <div class="flex justify-between">
-      <h1 class="mt-5 font-large">Register form List</h1>
+      <h1 class="mt-5 font-large">Students</h1>
+      <div class="mt-3">
+        <router-link to="/admin/lesson-create-admin">
+          <button
+            type="button"
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          >
+            Add student
+          </button>
+        </router-link>
+      </div>
     </div>
     <div>
       <h1>Let's check your update today!!</h1>
     </div>
     <div class="border-style ml-7 mt-5">
+      <div class="pb-4 ml-7 mt-5 bg-white dark:bg-gray-900">
+        <label for="table-search" class="sr-only">Search</label>
+        <div class="relative mt-1">
+          <div
+            class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none"
+          >
+            <svg
+              class="w-4 h-4 text-gray-500 dark:text-gray-400"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 20 20"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+              />
+            </svg>
+          </div>
+          <input
+            v-model="searchKeyword"
+            @input="userStore.searchTeacher(searchKeyword)"
+            type="text"
+            id="table-search"
+            class="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Search for items"
+          />
+        </div>
+      </div>
       <div>
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
           <table
@@ -17,21 +59,39 @@
               class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
             >
               <tr>
-                <th class="px-6 py-3 items-center space-x-2 cursor-pointer">
+                <th
+                  class="px-6 py-3 items-center space-x-2 cursor-pointer"
+                  @click="userStore.changeSortTeacher('id')"
+                >
                   <span>ID</span>
+                  <span v-if="userStore.sortBy === 'id'">
+                    {{ userStore.order === 'asc' ? '⬆' : '⬇' }}
+                  </span>
                 </th>
 
-                <th class="px-6 py-3 items-center space-x-2 cursor-pointer">
+                <th
+                  class="px-6 py-3 items-center space-x-2 cursor-pointer"
+                  @click="userStore.changeSortTeacher('username')"
+                >
                   <span>Username</span>
+                  <span v-if="userStore.sortBy === 'username'">
+                    {{ userStore.order === 'asc' ? '⬆' : '⬇' }}
+                  </span>
+                </th>
+                <th class="px-6 py-3 items-center space-x-2">
+                  <span> Date of birth </span>
                 </th>
                 <th class="px-6 py-3 items-center space-x-2 cursor-pointer">
-                  <span> Position </span>
+                  <span> Email </span>
                 </th>
-                <th class="px-6 py-3 items-center space-x-2 cursor-pointer">
-                  <span> Reason </span>
-                </th>
-                <th scope="col" style="padding: 11px 20px" class="px-6 py-3">
+                <th
+                  class="px-6 py-3 items-center space-x-2 cursor-pointer"
+                  @click="userStore.changeSortTeacher('isActive')"
+                >
                   <span class="flex items-center"> Status </span>
+                  <span v-if="userStore.sortBy === 'isActive'">
+                    {{ userStore.order === 'asc' ? '⬆' : '⬇' }}
+                  </span>
                 </th>
                 <th scope="col" style="padding: 11px 20px" class="px-6 py-3">
                   <span class="flex items-center"> Actions </span>
@@ -39,43 +99,41 @@
               </tr>
             </thead>
             <tbody>
-              <!-- <template> v-for="item in lessonStore.lessonList"
-                :key="item.id" -->
               <tr
-                v-for="item in registerStore.allFormAdmin"
+                v-for="item in userStore.teachers"
                 :key="item.id"
                 class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
               >
-                <td
-                  class="px-6 py-4"
-                  style="padding: 11px 20px; color: blue; text-decoration: underline"
+                <RouterLink :to="{ name: 'user-detail-admin', params: { userId: item.id } }">
+                  <td
+                    class="px-6 py-4"
+                    style="padding: 11px 20px; color: blue; text-decoration: underline"
+                  >
+                    {{ item.id }}
+                  </td></RouterLink
                 >
-                  {{ item.id }}
+                <td style="padding: 11px 20px" class="px-6 py-4">
+                  {{ item.username }}
                 </td>
                 <td style="padding: 11px 20px" class="px-6 py-4">
-                  {{ item.user?.username }}
+                  {{ formatDate(item.dateOfBirth) }}
                 </td>
                 <td style="padding: 11px 20px" class="px-6 py-4">
-                  {{ item.position }}
-                </td>
-                <td style="padding: 11px 20px" class="px-6 py-4">
-                  {{ toggleReadMore ? item.reason : `${item.reason.slice(0, maxLength)}...` }}
+                  {{ item.email }}
                 </td>
                 <td style="padding: 11px 20px" class="px-6 py-4">
                   <span
                     style="font-weight: bold"
-                    :class="item.status ? 'text-green-500' : 'text-yellow-400'"
+                    :class="item.active ? 'text-green-500' : 'text-red-500'"
                   >
-                    {{ item.status ? 'Submitted' : 'Pending' }}
+                    {{ item.active ? 'Active' : 'Inactive' }}
                   </span>
                 </td>
                 <td
                   scope="row"
                   class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
-                  <RouterLink
-                    :to="{ name: 'register-detail-admin', params: { registerId: item.id } }"
-                  >
+                  <RouterLink :to="{ name: 'lesson-update-admin', params: { lessonId: item.id } }">
                     <button class="mr-3 style-icon-actions" style="background-color: #f7e8f6">
                       <svg
                         style="margin-left: 2.5px"
@@ -97,45 +155,41 @@
                       </svg>
                     </button>
                   </RouterLink>
-                  <button
-                    class="mr-3 style-icon-actions"
+
+                  <!-- <button
+                    style="background-color: #f95454"
                     @click="openModal(item.id)"
+                    class="style-icon-actions"
                     id="button"
-                    :data-modal-toggle="`popup-modal-${selectedRegisterId}`"
-                    :data-modal-target="`popup-modal-${selectedRegisterId}`"
-                    style="background-color: #c2ffc7"
+                    :data-modal-toggle="`popup-modal-${selectedUserId}`"
+                    :data-modal-target="`popup-modal-${selectedUserId}`"
+                    type="button"
                   >
                     <svg
                       style="margin-left: 2.5px"
                       class="w-6 h-6 text-gray-800 dark:text-white"
                       aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
                       width="24"
                       height="24"
-                      viewBox="0 0 24 24"
                       fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      transform="rotate(0 0 0)"
+                      viewBox="0 0 24 24"
                     >
                       <path
-                        d="M20.75 18.5V8.67794L19.25 10.1779V18.5C19.25 18.9142 18.9142 19.25 18.5 19.25H5.5C5.08579 19.25 4.75 18.9142 4.75 18.5V5.5C4.75 5.08579 5.08579 4.75 5.5 4.75H18.314L19.2936 3.77034C19.3842 3.67974 19.4806 3.59848 19.5816 3.52657C19.2607 3.35027 18.8921 3.25 18.5 3.25H5.5C4.25736 3.25 3.25 4.25736 3.25 5.5V18.5C3.25 19.7426 4.25736 20.75 5.5 20.75H18.5C19.7426 20.75 20.75 19.7426 20.75 18.5Z"
-                        fill="#343C54"
-                        stroke="#343C54"
-                        stroke-width="1"
-                      />
-                      <path
-                        d="M20.4838 6.51868C20.7767 6.22578 20.7767 5.75091 20.4838 5.45802C20.1909 5.16512 19.7161 5.16512 19.4232 5.45802L11.9298 12.9514L8.57686 9.59849C8.28396 9.3056 7.80909 9.3056 7.5162 9.5985C7.22331 9.89139 7.22331 10.3663 7.5162 10.6592L11.3995 14.5424C11.6924 14.8353 12.1672 14.8353 12.4601 14.5424L20.4838 6.51868Z"
-                        fill="#343C54"
-                        stroke="#343C54"
-                        stroke-width="1"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"
                       />
                     </svg>
-                  </button>
+                  </button> -->
                 </td>
               </tr>
             </tbody>
           </table>
-          <div
-            v-for="item in registerStore.allFormAdmin"
+          <!-- <div
+            v-for="item in userStore.students"
             :key="item.id"
             :id="`popup-modal-${item.id}`"
             tabindex="-1"
@@ -183,14 +237,11 @@
                     />
                   </svg>
                   <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-                    Are you sure you want to delete this course?
+                    Are you sure you want to change status of user?
                   </h3>
-                  <p style="font-size: small" class="mb-5 text-gray-500 dark:text-gray-400">
-                    It's delete all lessons, videos and assignments too!!
-                  </p>
                   <button
-                    @click="submit(item.id, item.position, item.reason, item.user.id)"
-                    :data-modal-hide="`popup-modal-${selectedRegisterId}`"
+                    @click="updateStatus"
+                    :data-modal-hide="`popup-modal-${selectedUserId}`"
                     type="button"
                     class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
                   >
@@ -198,7 +249,7 @@
                   </button>
                   <button
                     @click="closeModal"
-                    :data-modal-hide="`popup-modal-${selectedRegisterId}`"
+                    :data-modal-hide="`popup-modal-${selectedUserId}`"
                     type="button"
                     class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                   >
@@ -207,55 +258,42 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
+          <PaginationLayout
+            class="my-5 flex justify-center"
+            :currentPage="userStore.pageTeacher"
+            :totalPage="userStore.totalPageTeacher"
+            @page-change="handlePageChange"
+          />
         </div>
       </div>
     </div>
   </main>
 </template>
 <script lang="ts" setup>
-// import { useReceiptStore } from '@/stores/ReceiptStore'
-import { useRegisterFormStore } from '@/stores/RegisterFormStore'
+import { useUserStore } from '@/stores/UserStore'
+import PaginationLayout from '@/views/pagination/PaginationLayout.vue'
+import { format } from 'date-fns'
 import { onMounted, ref } from 'vue'
-// import PaginationLayout from '@/views/pagination/PaginationLayout.vue'
 
-const registerStore = useRegisterFormStore()
-const toggleReadMore = ref(false)
-const maxLength = 80
+const userStore = useUserStore()
+const searchKeyword = ref<string | ''>('')
 
-const selectedRegisterId = ref<number | null>(null)
-
-// Hàm mở modal
-const openModal = (id: number) => {
-  selectedRegisterId.value = id
-
-  // Đảm bảo modal có tồn tại trước khi hiển thị
-  const modal = document.getElementById(`popup-modal-${id}`)
-  if (modal) {
-    modal.classList.remove('hidden') // Nếu dùng Tailwind
-  }
+const handlePageChange = async (newPage: number) => {
+  await userStore.changePageTeacher(newPage)
 }
 
-const closeModal = () => {
-  if (selectedRegisterId.value !== null) {
-    const modal = document.getElementById(`popup-modal-${selectedRegisterId.value}`)
-    if (modal) {
-      modal.classList.add('hidden') // Nếu dùng Tailwind
-    }
-    selectedRegisterId.value = null // Reset lại sau khi đóng modal
+const formatDate = (timestamp: number) => {
+  try {
+    const date = new Date(timestamp) // Chuyển đổi timestamp thành đối tượng Date
+    return format(date, 'dd/MM/yyyy') // Định dạng ngày theo kiểu dd/MM/yyyy
+  } catch (error) {
+    console.error('Lỗi khi định dạng ngày: ', error)
+    return 'Invalid date'
   }
 }
-
-const submit = async (registerId: number, position: string, reason: string, userId: number) => {
-  if (selectedRegisterId.value !== null) {
-    await registerStore.submitRegisterFormIcon(registerId, position, reason, userId)
-    closeModal()
-    // await registerStore.loadRegisterById(registerId)
-  }
-}
-
 onMounted(async () => {
-  await registerStore.loadRegisterFormAdmin()
+  await userStore.loadUserByRoleTeacher()
 })
 </script>
 <style scoped>
@@ -270,8 +308,8 @@ onMounted(async () => {
 }
 
 .style-icon-actions {
-  width: 1.8rem;
-  height: 1.8rem;
+  width: 1.7rem;
+  height: 1.7rem;
   border-radius: 10px;
 }
 </style>
