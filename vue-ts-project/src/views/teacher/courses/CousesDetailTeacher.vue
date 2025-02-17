@@ -179,20 +179,20 @@
           <div class="flex justify-around">
             <p class="mt-2 mr-3">Lessons:</p>
             <input
+              v-model="courseStore.countLesson[courseId]"
               type="number"
-              name="price"
               style="width: 100px"
-              id="price"
+              disabled
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
             />
           </div>
           <div class="flex justify-around mr-6 ml-10">
             <p class="mt-2 mr-3">Videos:</p>
             <input
+              v-model="lessonStore.countVideoByCourse"
               type="number"
-              name="price"
+              disabled
               style="width: 100px"
-              id="price"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
             />
           </div>
@@ -207,17 +207,19 @@
           data-accordion="open"
           class="mb-5"
         >
-          <h2 id="accordion-arrow-icon-heading-1">
-            <button
-              type="button"
-              class="flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-900 bg-gray-100 border border-b-0 border-gray-200 rounded-t-xl focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3"
-              data-accordion-target="#accordion-arrow-icon-body-1"
-              aria-expanded="true"
-              aria-controls="accordion-arrow-icon-body-1"
-            >
-              <span>{{ item.name }}</span>
-            </button>
-          </h2>
+          <router-link :to="{ name: 'lesson-detail-teacher', params: { lessonId: item.id } }">
+            <h2 id="accordion-arrow-icon-heading-1">
+              <button
+                type="button"
+                class="flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-900 bg-gray-100 border border-b-0 border-gray-200 rounded-t-xl focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3"
+                data-accordion-target="#accordion-arrow-icon-body-1"
+                aria-expanded="true"
+                aria-controls="accordion-arrow-icon-body-1"
+              >
+                <span>{{ item.name }}</span>
+              </button>
+            </h2>
+          </router-link>
           <div id="accordion-arrow-icon-body-1" aria-labelledby="accordion-arrow-icon-heading-1">
             <div
               v-for="video in item.videos"
@@ -243,52 +245,6 @@
               <p class="mb-2 text-gray-500 dark:text-gray-400">
                 {{ video.description }}
               </p>
-            </div>
-            <!-- v-for="assignment in lessonStore.assignment"
-            :key="assignment.id" -->
-            <div
-              class="flex justify-between p-5 border border-b-1 border-gray-200 dark:border-gray-700 dark:bg-gray-900"
-            >
-              <div class="flex">
-                <svg
-                  class="mx-2"
-                  width="25"
-                  height="25"
-                  viewBox="0 0 24 24"
-                  fill="#343C54"
-                  xmlns="http://www.w3.org/2000/svg"
-                  transform="rotate(0 0 0)"
-                >
-                  <path
-                    d="M10.9201 10.4379C10.9201 9.84143 11.4036 9.35792 12 9.35792C12.5965 9.35792 13.08 9.84143 13.08 10.4379C13.08 10.8035 12.8989 11.127 12.6182 11.3236C12.3475 11.5131 12.0204 11.7662 11.7572 12.0841C11.491 12.4055 11.25 12.8426 11.25 13.3841C11.25 13.7983 11.5858 14.1341 12 14.1341C12.4142 14.1341 12.75 13.7983 12.75 13.3841C12.75 13.3091 12.7807 13.1999 12.9125 13.0408C13.0471 12.8782 13.2442 12.7164 13.4785 12.5523C14.143 12.0871 14.58 11.3136 14.58 10.4379C14.58 9.01301 13.4249 7.85792 12 7.85792C10.5751 7.85792 9.42006 9.01301 9.42006 10.4379C9.42006 10.8521 9.75584 11.1879 10.1701 11.1879C10.5843 11.1879 10.9201 10.8521 10.9201 10.4379Z"
-                    fill="#343C54"
-                  />
-                  <path
-                    d="M11.9993 14.6421C11.5851 14.6421 11.2493 14.9779 11.2493 15.3921C11.2493 15.8063 11.5851 16.1421 11.9993 16.1421C12.4135 16.1421 12.75 15.8063 12.75 15.3921C12.75 14.9779 12.4135 14.6421 11.9993 14.6421Z"
-                    fill="#343C54"
-                  />
-                  <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM3.5 12C3.5 7.30558 7.30558 3.5 12 3.5C16.6944 3.5 20.5 7.30558 20.5 12C20.5 16.6944 16.6944 20.5 12 20.5C7.30558 20.5 3.5 16.6944 3.5 12Z"
-                    fill="#343C54"
-                  />
-                </svg>
-                <!-- <div class="flex"> -->
-                <div class="text-gray-500 dark:text-gray-400">
-                  <p>
-                    8888
-                    <!-- {{ assignment.name }} -->
-                  </p>
-                </div>
-              </div>
-              <div>
-                <div class="text-gray-500 dark:text-gray-400">
-                  444
-                  <!-- <p>{{ lessonStore.totalQuestion[assignment.id] }} Questions</p> -->
-                </div>
-              </div>
-              <!-- </div> -->
             </div>
           </div>
         </div>
@@ -326,7 +282,7 @@ const updateCourse = async () => {
     }
   }
 
-  formData.append('discount', discountFloat)
+  formData.append('discount', discountFloat.toString())
 
   if (selectedCategoryName.value != null && selectedCategoryName.value !== undefined) {
     formData.append('categoryId', selectedCategoryName.value.toString())
@@ -394,6 +350,13 @@ onMounted(async () => {
   await courseStore.loadTags()
   await courseStore.loadTeachers()
   await lessonStore.loadLessonsByCourseId(courseId)
+  await courseStore.countLessons(courseId)
+  await lessonStore.countVideoByCourseId(courseId)
+
+  for (const lesson of lessonStore.lessonsByCourseId) {
+    await lessonStore.loadVideos(lesson.id)
+    // console.log(assignmentStore.assignmentTeacher)
+  }
 })
 </script>
 <style scoped>

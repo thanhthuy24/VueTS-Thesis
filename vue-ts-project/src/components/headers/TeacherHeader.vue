@@ -2,7 +2,9 @@
   <nav
     class="flex justify-between fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700"
   >
-    <img src="@/assets/logo.png" class="h-20" alt="HR*YJ Logo" />
+    <RouterLink to="/teacher">
+      <img src="@/assets/logo.png" class="h-20" alt="HR*YJ Logo" />
+    </RouterLink>
     <div
       style="margin-right: 3%"
       v-if="loginStore.isLoggedIn"

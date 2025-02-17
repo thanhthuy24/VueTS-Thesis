@@ -222,6 +222,24 @@ const router = createRouter({
       name: 'course-detail-teacher',
       component: () => import('../views/teacher/courses/CousesDetailTeacher.vue'),
     },
+    {
+      path: '/teacher/lesson-detail-teacher/:lessonId',
+      meta: { requiresAuth: true, role: 'TEACHER', layout: 'TeacherLayoutCourse' },
+      name: 'lesson-detail-teacher',
+      component: () => import('../views/teacher/lesson/LessonDetailTeacher.vue'),
+    },
+    {
+      path: '/teacher/assignment-list-teacher/:courseId',
+      meta: { requiresAuth: true, role: 'TEACHER', layout: 'TeacherLayoutCourse' },
+      name: 'assignment-list-teacher',
+      component: () => import('../views/teacher/assignments/AssignmentListTeacher.vue'),
+    },
+    {
+      path: '/teacher/assignment-detail-teacher/:assignmentId',
+      meta: { requiresAuth: true, role: 'TEACHER', layout: 'TeacherLayoutCourse' },
+      name: 'assignment-detail-teacher',
+      component: () => import('../views/teacher/assignments/AssignmentDetailTeacher.vue'),
+    },
   ],
 })
 

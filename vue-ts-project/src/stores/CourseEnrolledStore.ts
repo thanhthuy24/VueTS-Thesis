@@ -87,6 +87,8 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
     checkCourseEnrolledBoolean: false as boolean,
     checkEnrollmentBoolean: false as boolean,
 
+    countUserEnrolled: 0,
+
     totalPages: 0,
     totalPagesReplyCmt: 0,
     totalPagesReview: 0,
@@ -102,7 +104,7 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
 
     comments: [] as Comment[],
     countComment: 0,
-    commentReply: [] as ReplyComment[],
+    commentReply: {} as Record<number, ReplyComment[]>,
 
     contentComment: '',
     contentReplyComment: '',
@@ -165,6 +167,15 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
       }
     },
 
+    async countUserEnrolledCourse(courseId: number) {
+      try {
+        const res = await authAPIs().get(`${endpoints.enrollments}/course/${courseId}/count`)
+        this.countUserEnrolled = res.data
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
     async loadCommentByLessonId(lessonId: number) {
       try {
         const res = await authAPIs().get(`${endpoints.comments}/${lessonId}`, {
@@ -190,7 +201,7 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
         })
         this.commentReply[commentId] = res.data.replycomments
         this.totalPagesReplyCmt = res.data.totalPages
-        // console.log(res.data)
+        console.log(res.data)
       } catch (err) {
         console.error(err)
       }
@@ -283,7 +294,8 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
       }
     },
 
-    // tính phần trăm mà số lượng rate chiếm trong tổng số lượt rate, ví dụ: all: 4 rates, rate 5 có 2 => rate 5 chiếm 50%
+    // tính phần trăm mà số lượng rate chiếm trong tổng số lượt rate,
+    // ví dụ: all: 4 rates, rate 5 có 2 => rate 5 chiếm 50%
 
     async loadAveragePerRate(courseId: number, rate: number) {
       try {

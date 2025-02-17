@@ -9,6 +9,21 @@ interface Lesson {
   description: string
 }
 
+interface User {
+  id: number
+  username: string
+  avatar: string
+  email: string
+  phone: string
+  firstName: string
+  lastName: string | null
+  dateOfBirth: Date | null
+  role: {
+    id: number
+    name: string
+  }
+}
+
 interface Assignment {
   id: number
   name: string
@@ -25,6 +40,7 @@ interface Question {
 }
 
 interface Essay {
+  id: number
   content: string
   created_date: number
   assignment_id: number
@@ -32,9 +48,12 @@ interface Essay {
 }
 
 interface AnswerEssay {
+  id: number
   content: string
-  assignment_id: number
-  question_id: number
+  created_date: number
+  assignment: Assignment
+  question: Question
+  user: User
 }
 
 interface QuestionEssay {
@@ -73,12 +92,16 @@ export const useAssignmentStore = defineStore('assignmentStore', {
     assignments: [] as Assignment[],
     assignment: {} as Assignment,
     assignmentDone: [] as Assignment[],
+    assignmentsByLesson: {} as Record<number, Assignment[]>,
+
+    assignmentTeacher: [] as Assignment[],
 
     questions: [] as Question[],
     questionEssay: [] as QuestionEssay[],
 
     essays: {} as Essay,
     answerEssays: [] as AnswerEssay[],
+    listEssays: {} as AnswerEssay[],
 
     answerChoices: [] as AnswerChoice[],
     answers: [] as AnswerChoice[],
@@ -86,7 +109,9 @@ export const useAssignmentStore = defineStore('assignmentStore', {
     correctAnswers: [] as Choice[],
     score: {} as Score,
 
-    // essays: [] as Essay[],
+    countAssignmentDone: {} as Record<number, number>,
+
+    assignmentByLessonTemp: {} as Assignment[],
 
     page: 0,
     limit: 10,
@@ -111,6 +136,25 @@ export const useAssignmentStore = defineStore('assignmentStore', {
       }
     },
 
+    async loadAssignmentByLessonId(lessonId: number) {
+      try {
+        const res = await authAPIs().get(`${endpoints.assignments}/lesson/${lessonId}`)
+        this.assignmentsByLesson[lessonId] = res.data // Lưu bài tập theo lessonId
+      } catch (err) {
+        console.error(err)
+        this.assignmentsByLesson[lessonId] = [] // Nếu lỗi, đặt giá trị rỗng để tránh lỗi khi render
+      }
+    },
+
+    // async loadAssignmentTemp(lessonId: number) {
+    //   try {
+    //     const res = await authAPIs().get(`${endpoints.assignments}/lesson/${lessonId}`)
+    //     this.assignmentByLessonTemp = res.data // Lưu bài tập theo lessonId
+    //   } catch (err) {
+    //     console.error(err) // Nếu lỗi, đặt giá trị rỗng để tránh lỗi khi render
+    //   }
+    // },
+
     async addAssignmentDone(assignmentId: number) {
       try {
         await authAPIs().post(`${endpoints.assignmentDone}`, {
@@ -127,6 +171,17 @@ export const useAssignmentStore = defineStore('assignmentStore', {
         this.assignmentDone[assignmentId] = res.data
         // console.log(this.assignmentDone)
         // return res.data
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    async countAssignmentDoneByAssignment(assignmentId: number) {
+      try {
+        const res = await authAPIs().get(
+          `${endpoints.assignmentDone}/assignment/${assignmentId}/count`,
+        )
+        return res.data
       } catch (err) {
         console.error(err)
       }
@@ -206,6 +261,21 @@ export const useAssignmentStore = defineStore('assignmentStore', {
       // await this.addAssignmentDone(assignmentId)
       // // load assignment đã hoàn thành
       // await this.loadAssignmentDone(assignmentId)
+    },
+
+    async loadEssaysByAssignmentId(assignmentId: number) {
+      try {
+        const res = await authAPIs().get(`${endpoints.essays}/assignment/${assignmentId}`, {
+          params: {
+            page: this.page,
+            limit: this.limit,
+          },
+        })
+        this.listEssays = res.data.essays
+        console.log(res.data.essays)
+      } catch (err) {
+        console.error(err)
+      }
     },
 
     logEssay(content: string, questionId: number, assignmentId: number) {

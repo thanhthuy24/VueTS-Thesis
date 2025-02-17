@@ -173,6 +173,7 @@ export const useCourseStore = defineStore('courseStore', {
           ...this.countLesson,
           [courseId]: res.data,
         }
+        // console.log(res.data)
       } catch (err) {
         console.error(err)
       }

@@ -61,6 +61,8 @@ export const useLessonStore = defineStore('lessonStore', {
     countVideo: {} as Record<number, number>,
 
     listVideos: [] as Video[],
+
+    countVideoByCourse: 0,
   }),
 
   actions: {
@@ -123,6 +125,15 @@ export const useLessonStore = defineStore('lessonStore', {
       }
     },
 
+    async countVideoByCourseId(courseId: number) {
+      try {
+        const res = await authAPIs().get(`${endpoints.videos}/count/course/${courseId}`)
+        this.countVideoByCourse = res.data
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
     async loadListVideosByLessonId(lessonId: number) {
       try {
         const res = await authAPIs().get(`${endpoints.videos}/lesson/${lessonId}`)
@@ -167,7 +178,7 @@ export const useLessonStore = defineStore('lessonStore', {
       try {
         const res = await APIs.get(`${endpoints.assignments}/lesson/${lessonId}`)
         this.assignment = res.data
-        // console.log(res.data)
+        console.log(res.data)
       } catch (err) {
         console.error(err)
       }
@@ -206,7 +217,7 @@ export const useLessonStore = defineStore('lessonStore', {
     chooseVideo(video: Video) {
       this.videoUrl = video.name
       this.currentVideoId = video.id
-      // console.log(this.videoUrl)
+      console.log(this.videoUrl)
     },
   },
 })
