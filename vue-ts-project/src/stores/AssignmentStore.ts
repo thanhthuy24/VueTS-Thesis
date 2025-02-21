@@ -62,10 +62,23 @@ interface QuestionEssay {
   essays: Essay[]
 }
 
+interface QuestionChoice {
+  id: number
+  content: string
+  choices: Choice[]
+}
+
 interface Choice {
   id: number
   content: string
   isCorrect: boolean
+  question_id: number
+}
+
+interface ChoiceCreate {
+  content: string
+  is_correct: boolean
+  question_id: number
 }
 
 interface AnswerChoice {
@@ -85,6 +98,7 @@ interface Score {
   score: number
   feedBack: string
   assignment: Assignment
+  user: User
 }
 
 export const useAssignmentStore = defineStore('assignmentStore', {
@@ -98,10 +112,18 @@ export const useAssignmentStore = defineStore('assignmentStore', {
 
     questions: [] as Question[],
     questionEssay: [] as QuestionEssay[],
+    question: {} as Question,
+    questionId: 0,
+
+    questionChoice: [] as QuestionChoice[],
+
+    choice: [] as ChoiceCreate[],
 
     essays: {} as Essay,
     answerEssays: [] as AnswerEssay[],
     listEssays: {} as AnswerEssay[],
+
+    scoreEssay: {} as Score[],
 
     answerChoices: [] as AnswerChoice[],
     answers: [] as AnswerChoice[],
@@ -187,6 +209,41 @@ export const useAssignmentStore = defineStore('assignmentStore', {
       }
     },
 
+    async addQuestion(assignmentId: number, content: string) {
+      try {
+        const res = await authAPIs().post(endpoints.questions, {
+          content: content,
+          assignment_id: assignmentId,
+        })
+        this.question = res.data
+        this.questionId = res.data.id
+        toast.success('Create question successfully!!')
+        this.choice = []
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    logChoiceCreate(content: string, questionId: number, isCorrect: boolean) {
+      this.choice.push({
+        content: content,
+        question_id: questionId,
+        is_correct: isCorrect,
+      })
+
+      // console.log(questionId)
+    },
+
+    async createChoice() {
+      try {
+        await authAPIs().post(endpoints.choices, this.choice)
+        toast.success('Create choices successully!!')
+        // await this.loadQuestionChoiceByAssignmentId(assignmentId)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
     async loadQuestions(assignmentId: number) {
       try {
         const res = await authAPIs().get(`${endpoints.questions}/assignment/${assignmentId}`)
@@ -199,6 +256,16 @@ export const useAssignmentStore = defineStore('assignmentStore', {
             correctChoice: correctChoice ? correctChoice : null,
           }
         })
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    async loadQuestionChoiceByAssignmentId(assignmentId: number) {
+      try {
+        const res = await authAPIs().get(`${endpoints.questions}/assignment/${assignmentId}`)
+        this.questionChoice = res.data
+        console.log(res.data)
       } catch (err) {
         console.error(err)
       }
@@ -255,12 +322,6 @@ export const useAssignmentStore = defineStore('assignmentStore', {
 
     async addEssay(assignmentId: number) {
       console.log(this.answerEssays)
-      // await authAPIs().post(`${endpoints.essays}`, this.answerEssays)
-      // toast.success('Do this assignment successully!!')
-      // // assignment đã hoàn thành
-      // await this.addAssignmentDone(assignmentId)
-      // // load assignment đã hoàn thành
-      // await this.loadAssignmentDone(assignmentId)
     },
 
     async loadEssaysByAssignmentId(assignmentId: number) {
@@ -297,6 +358,34 @@ export const useAssignmentStore = defineStore('assignmentStore', {
           assignment_id: assignmentId,
         })
         this.score = res.data
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    async addScoreEssay(assignmentId: number, essayId: number, score: number, feedBack: string) {
+      try {
+        await authAPIs().post(`${endpoints.score}/essay/${essayId}`, {
+          assignment_id: assignmentId,
+          essay_id: essayId,
+          score: score,
+          feedback: feedBack,
+        })
+        toast.success('Done!!')
+        await this.loadScoreByAssignment(assignmentId)
+      } catch (err) {
+        toast.error('Score is existed!!')
+        console.error(err)
+      }
+    },
+
+    async loadScoreByAssignment(assignmentId: number) {
+      try {
+        const res = await authAPIs().get(`${endpoints.score}/${assignmentId}`)
+        res.data.forEach((item: Score) => {
+          this.scoreEssay[item.user.id] = item
+        })
+        console.log(res.data)
       } catch (err) {
         console.error(err)
       }

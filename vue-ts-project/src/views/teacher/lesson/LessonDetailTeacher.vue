@@ -365,18 +365,29 @@ const handlePageChange = async (newPage: number) => {
 }
 
 const getLessonId = ref(0)
-const loadComments = async (lessonId: number) => {
+
+onMounted(async () => {
   getLessonId.value = lessonId
-  await course(async () => {
+  videoUrl.value = ''
   await lessonStore.loadListVideosByLessonId(lessonId)
-  // await c
   await courseEnrolled.loadCommentByLessonId(lessonId)
   await courseEnrolled.countCommentByLesson(lessonId)
   for (const comment of courseEnrolled.comments) {
     await courseEnrolled.loadReplyComment(comment.id)
-  }ts(lessonId)
-  videoUrl.value = ''
+  }
 })
+// const loadComments = async (lessonId: number) => {
+//   getLessonId.value = lessonId
+//   await course(async () => {
+//   await lessonStore.loadListVideosByLessonId(lessonId)
+//   // await c
+//   await courseEnrolled.loadCommentByLessonId(lessonId)
+//   await courseEnrolled.countCommentByLesson(lessonId)
+//   for (const comment of courseEnrolled.comments) {
+//     await courseEnrolled.loadReplyComment(comment.id)
+//   }
+//
+// })
 </script>
 <style scoped>
 .font-large {

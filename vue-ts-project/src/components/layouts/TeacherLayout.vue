@@ -11,7 +11,7 @@
           :key="c.id"
           class="flex-courses max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
         >
-          <RouterLink :to="{ name: 'teacher-layout-course', params: { courseId: c.id } }">
+          <RouterLink :to="{ name: 'course-detail-teacher', params: { courseId: c.id } }">
             <a> <img class="rounded-t-lg image-tital-course" :src="c.image" alt="" /> </a>
           </RouterLink>
           <div class="p-5 flex-grow">

@@ -98,7 +98,7 @@
                   class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
                   <RouterLink :to="{ name: 'lesson-create-admin', params: { courseId: item.id } }">
-                    <button class="mr-3 style-icon-actions" style="background-color: #f7e8f6">
+                    <button class="mr-3 style-icon-actions" style="background-color: #a1e3f9">
                       <svg
                         class="w-6 h-6 text-gray-800 dark:text-white"
                         aria-hidden="true"

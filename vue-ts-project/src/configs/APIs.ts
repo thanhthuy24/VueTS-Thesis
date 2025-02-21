@@ -18,6 +18,8 @@ export const endpoints = {
 
   questions: '/questions',
 
+  choices: '/choices',
+
   answerChoices: '/answer-choices',
   score: '/score',
 
@@ -50,6 +52,8 @@ export const endpoints = {
   email: '/email',
 
   notifications: '/notifications',
+
+  token: '/token',
 }
 
 export const authAPIs = () => {

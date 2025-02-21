@@ -2,7 +2,7 @@
   <main>
     <section class="bg-white dark:bg-gray-900">
       <div class="flex justify-between">
-        <h1 class="mt-5 font-large">Add Lesson for course {{ courseId }}</h1>
+        <h1 class="mt-5 font-large">Add Lesson for course</h1>
         <div class="mt-3">
           <router-link to="/admin/lesson-list-admin">
             <button

@@ -240,6 +240,12 @@ const router = createRouter({
       name: 'assignment-detail-teacher',
       component: () => import('../views/teacher/assignments/AssignmentDetailTeacher.vue'),
     },
+    {
+      path: '/teacher/assignment-create-teacher/:courseId',
+      meta: { requiresAuth: true, role: 'TEACHER', layout: 'TeacherLayoutCourse' },
+      name: 'assignment-create-teacher',
+      component: () => import('../views/teacher/assignments/AssignmentCreateTeacher.vue'),
+    },
   ],
 })
 

@@ -1,3 +1,4 @@
+import { authAPIs, endpoints } from '@/configs/APIs'
 import { initializeApp } from 'firebase/app'
 import { getMessaging, getToken, onMessage } from 'firebase/messaging'
 
@@ -5,14 +6,19 @@ const firebaseConfig = {}
 
 const app = initializeApp(firebaseConfig)
 const messaging = getMessaging(app)
+// const loginStore = useLoginStore()
 
-export const requestForToken = async () => {
+export const requestForToken = async (userId: number) => {
   try {
     const token = await getToken(messaging, {
       vapidKey: '',
     })
     if (token) {
       console.log('FCM Token:', token)
+      await authAPIs().post(endpoints.token, {
+        user_id: userId,
+        token: token,
+      })
       return token
     } else {
       console.log('No registration token available.')

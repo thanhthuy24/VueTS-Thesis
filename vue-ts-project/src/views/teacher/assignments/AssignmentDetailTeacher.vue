@@ -105,7 +105,11 @@
           </div>
         </div>
         <div v-else class="mt-5">
-          <div v-for="essay in assignmentStore.listEssays" :key="essay.id" class="my-5">
+          <div
+            v-for="essay in assignmentStore.listEssays"
+            :key="essay.id"
+            class="my-5 format-essay-user"
+          >
             <div>
               <p
                 class="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold"
@@ -124,44 +128,97 @@
             >
             </textarea>
             <div>
-              <form class="flex" @submit.prevent="handleSendScore(essay.id)">
-                <div class="sm:col-span-2 mr-5">
-                  <label
-                    for="score"
-                    class="block mb-3 mt-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >Score: <span style="color: red">*</span></label
+              <form
+                class="flex"
+                @submit.prevent="
+                  assignmentStore.addScoreEssay(assignmentId, essay.id, score, feedBack)
+                "
+              >
+                <div v-if="assignmentStore.scoreEssay[essay.user.id]">
+                  <div class="sm:col-span-2 mr-5">
+                    <label
+                      :for="'score-' + essay.id"
+                      class="block mb-3 mt-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >Score: <span style="color: red">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="score"
+                      :id="'score-' + essay.id"
+                      v-model="assignmentStore.scoreEssay[essay.user.id].score"
+                      style="width: 200px"
+                      class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                      required
+                    />
+                  </div>
+                  <div class="sm:col-span-2 mr-5">
+                    <label
+                      :for="'feedback-' + essay.id"
+                      class="block mb-3 mt-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >Feed back: <span style="color: red">*</span></label
+                    >
+                    <textarea
+                      :id="'feedback-' + essay.id"
+                      style="width: 500px"
+                      type="text"
+                      v-model="assignmentStore.scoreEssay[essay.user.id].feedBack"
+                      placeholder="Write your reply..."
+                      class="border border-gray-300 text-sm rounded-lg p-2.5"
+                      rows="3"
+                    >
+                    </textarea>
+                  </div>
+                  <button
+                    style="width: 130px; height: 40px"
+                    type="submit"
+                    disabled
+                    class="mt-3 text-white bg-slate-400 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                   >
-                  <input
-                    type="number"
-                    name="score"
-                    id="score"
-                    style="width: 200px"
-                    class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                    required
-                  />
+                    Submitted
+                  </button>
                 </div>
-                <div class="sm:col-span-2 mr-5">
-                  <label
-                    for="content"
-                    class="block mb-3 mt-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >Feed back: <span style="color: red">*</span></label
+                <div v-else>
+                  <div class="sm:col-span-2 mr-5">
+                    <label
+                      :for="'score-' + essay.id"
+                      class="block mb-3 mt-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >Score: <span style="color: red">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="score"
+                      :id="'score-' + essay.id"
+                      v-model="score"
+                      style="width: 200px"
+                      class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                      required
+                    />
+                  </div>
+                  <div class="sm:col-span-2 mr-5">
+                    <label
+                      :for="'feedback-' + essay.id"
+                      class="block mb-3 mt-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >Feed back: <span style="color: red">*</span></label
+                    >
+                    <textarea
+                      :id="'feedback-' + essay.id"
+                      style="width: 500px"
+                      type="text"
+                      v-model="feedBack"
+                      placeholder="Write your reply..."
+                      class="border border-gray-300 text-sm rounded-lg p-2.5"
+                      rows="3"
+                    >
+                    </textarea>
+                  </div>
+                  <button
+                    style="width: 130px; height: 40px"
+                    type="submit"
+                    class="text-white mt-10 bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                   >
-                  <textarea
-                    style="width: 500px"
-                    type="text"
-                    placeholder="Write your reply..."
-                    class="border border-gray-300 text-sm rounded-lg p-2.5"
-                    rows="3"
-                  >
-                  </textarea>
+                    Submit
+                  </button>
                 </div>
-                <button
-                  style="width: 130px; height: 40px"
-                  type="submit"
-                  class="text-white mt-10 bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                >
-                  Submit
-                </button>
               </form>
             </div>
           </div>
@@ -174,7 +231,7 @@
 import { useAssignmentStore } from '@/stores/AssignmentStore'
 import { useCourseEnrolled } from '@/stores/CourseEnrolledStore'
 import { format } from 'date-fns'
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -192,9 +249,13 @@ const formatDate = (timestamp: number) => {
   }
 }
 
-const handleSendScore = (essayId: number) => {
+const handleSendScore = async (essayId: number) => {
   console.log('Done for essay: ' + essayId)
+  // await assignmentStore.addScoreEssay(assignmentId, essayId, sc)
 }
+
+const score = ref(0)
+const feedBack = ref('')
 
 onMounted(async () => {
   await assignmentStore.loadAssignment(assignmentId)
@@ -208,6 +269,7 @@ onMounted(async () => {
 
   await assignmentStore.loadQuestions(assignmentId)
   await assignmentStore.loadEssaysByAssignmentId(assignmentId)
+  await assignmentStore.loadScoreByAssignment(assignmentId)
 })
 </script>
 <style scoped>
@@ -228,6 +290,12 @@ onMounted(async () => {
   /* width: 900px; */
   background-color: whitesmoke;
   margin-bottom: 10px;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.format-essay-user {
+  border: 1px solid rgb(0, 88, 16);
   border-radius: 10px;
   padding: 20px;
 }
