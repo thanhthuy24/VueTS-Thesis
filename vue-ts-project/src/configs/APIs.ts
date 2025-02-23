@@ -54,6 +54,7 @@ export const endpoints = {
   notifications: '/notifications',
 
   token: '/token',
+  certificate: '/certificate',
 }
 
 export const authAPIs = () => {

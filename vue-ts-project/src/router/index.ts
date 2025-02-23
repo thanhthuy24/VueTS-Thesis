@@ -9,6 +9,7 @@ const router = createRouter({
     {
       path: '/home',
       name: 'HomeView',
+      meta: { role: 'USER' },
       component: HomeView,
     },
     {
@@ -35,7 +36,7 @@ const router = createRouter({
     {
       path: '/cart',
       name: 'cart',
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, role: 'USER' },
       component: () => import('../views/cart/CartCourse.vue'),
     },
     {
@@ -249,15 +250,31 @@ const router = createRouter({
   ],
 })
 
+// router.beforeEach((to, from, next) => {
+//   const loginStore = useLoginStore()
+//   const isLoggedIn = loginStore.currentUser !== null
+
+//   if (to.meta.requiresAuth && !isLoggedIn) {
+//     next({ path: '/forbidden' })
+//   } else {
+//     next()
+//   }
+// })
+
 router.beforeEach((to, from, next) => {
   const loginStore = useLoginStore()
   const isLoggedIn = loginStore.currentUser !== null
+  const userRole = loginStore.role || localStorage.getItem('role') // Lấy role từ store hoặc localStorage
 
-  if (to.meta.requiresAuth && !isLoggedIn) {
-    next({ path: '/forbidden' })
-  } else {
-    next()
+  if (to.meta.requiresAuth) {
+    if (!isLoggedIn) {
+      return next({ path: '/login' }) // Nếu chưa đăng nhập, chuyển hướng đến login
+    }
+    if (to.meta.role && to.meta.role !== userRole) {
+      return next({ path: '/forbidden' }) // Nếu role không đúng, chuyển hướng đến forbidden
+    }
   }
+  next()
 })
 
 export default router

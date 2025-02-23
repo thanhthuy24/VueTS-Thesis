@@ -58,7 +58,7 @@ export const useLoginStore = defineStore('loginStore', {
           },
         })
         this.currentUser = response.data
-        console.log(this.currentUser)
+        // console.log(this.currentUser)
         this.role = response.data.role.name
         this.isLoggedIn = true
         this.statusWarning = false
@@ -66,14 +66,29 @@ export const useLoginStore = defineStore('loginStore', {
         localStorage.setItem('currentUser', JSON.stringify(this.currentUser))
         localStorage.setItem('role', this.role)
 
-        if (this.role === 'ADMIN') {
-          router.push('/admin') // Chuyển hướng đến trang Admin
-        } else if (this.role === 'USER') {
-          router.push('/home') // Chuyển hướng đến trang User
-        } else if (this.role === 'TEACHER') {
-          router.push('/teacher')
-        } else {
-          router.push('/login') // Chuyển hướng mặc định
+        // if (this.role === 'ADMIN') {
+        //   router.push('/admin') // Chuyển hướng đến trang Admin
+        // } else if (this.role === 'USER') {
+        //   router.push('/home') // Chuyển hướng đến trang User
+        // } else if (this.role === 'TEACHER') {
+        //   router.push('/teacher')
+        // } else {
+        //   router.push('/login') // Chuyển hướng mặc định
+        // }
+
+        switch (this.role) {
+          case 'ADMIN':
+            router.push('/admin')
+            break
+          case 'USER':
+            router.push('/home')
+            break
+          case 'TEACHER':
+            router.push('/teacher')
+            break
+          default:
+            router.push('/login')
+            break
         }
       } catch (err) {
         this.isLoggedIn = false
@@ -156,12 +171,15 @@ export const useLoginStore = defineStore('loginStore', {
     },
 
     logout() {
+      // authAPIs().delete(`${endpoints.token}/${this.currentUser?.id}`)
       this.isLoggedIn = false
       this.statusWarning = false
       this.token = ''
       this.currentUser = null
       localStorage.removeItem('token')
       localStorage.removeItem('expireTime')
+      localStorage.removeItem('currentUser')
+      localStorage.removeItem('role')
     },
 
     loginAcc(username: string, password: string) {

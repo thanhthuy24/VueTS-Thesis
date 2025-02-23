@@ -162,7 +162,7 @@ const updateLesson = async () => {
 }
 
 const updateTitleVideo = async (videoId: number, name: string, description: string) => {
-  toast.warning('Update title video successfully')
+  toast.success('Update title video successfully')
   const formData = new FormData()
   formData.append('name', name)
   formData.append('description', description)
@@ -174,7 +174,7 @@ const updateTitleVideo = async (videoId: number, name: string, description: stri
         'Content-Type': 'multipart/form-data',
       },
     })
-    toast.success('Update lesson successfully')
+    // toast.success('Update lesson successfully')
   } catch (err) {
     console.error(err)
   }

@@ -131,6 +131,8 @@ export const useAssignmentStore = defineStore('assignmentStore', {
     correctAnswers: [] as Choice[],
     score: {} as Score,
 
+    scores: {} as Score,
+
     countAssignmentDone: {} as Record<number, number>,
 
     assignmentByLessonTemp: {} as Assignment[],
@@ -394,7 +396,8 @@ export const useAssignmentStore = defineStore('assignmentStore', {
     async loadScore(assignmentId: number) {
       try {
         const res = await authAPIs().get(`${endpoints.score}/${assignmentId}`)
-        this.score = res.data
+        this.scores = res.data
+        console.log(this.scores)
       } catch (err) {
         console.error(err)
       }

@@ -131,6 +131,30 @@
                       <p class="my-3 mx-3">Mô tả: {{ courseStore.course?.teacher?.description }}</p>
                     </td>
                   </tr>
+                  <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <th
+                      scope="row"
+                      class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                    >
+                      Certificate
+                    </th>
+                    <td class="px-6 py-4">
+                      <button
+                        @click="
+                          courseEnrolled.downLoadCertificate(
+                            loginStore.currentUser?.firstName +
+                              ' ' +
+                              loginStore.currentUser?.lastName,
+                            courseStore.course.name,
+                          )
+                        "
+                        type="button"
+                        class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                      >
+                        Download Certificate
+                      </button>
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -593,6 +617,7 @@ onMounted(async () => {
     const res = await assignmentStore.loadAssignmentDone(a.id)
     assignmentDone.value[a.id] = res
   }
+  await courseEnrolled.checkProgressCertificate(courseId, userId)
 })
 </script>
 <style scoped>

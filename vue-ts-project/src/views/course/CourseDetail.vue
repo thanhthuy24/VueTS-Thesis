@@ -75,12 +75,28 @@
     <section class="flex-item-3">
       <div class="border-div-1">
         <div class="flex justify-between">
-          <div class="mt-2">
-            <span
-              class="mx-2 bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300"
-              >Yellow</span
+          <div class="mt-2 flex">
+            <div
+              class="ml-2 flex justify-center w-14 p-1 bg-yellow-100"
+              style="border-radius: 10px"
             >
-            based on <span class="style-review">236 reviews</span>
+              <p class="mt-1">{{ CourseEnrolled.averageRating }}</p>
+              <svg
+                class="h-6 w-6 text-yellow-300 ml-1 mt-1"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z"
+                />
+              </svg>
+            </div>
+
+            <div class="ml-3 mt-1">
+              based on <span class="style-review">{{ CourseEnrolled.countRatingAll }} reviews</span>
+            </div>
           </div>
           <div>
             <svg
@@ -179,7 +195,7 @@
                 d="M14 6H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1Zm7 11-6-2V9l6-2v10Z"
               />
             </svg>
-            <span class="my-3">-- videos</span>
+            <span class="my-3">{{ lessonStore.countVideoByCourse }} videos</span>
           </div>
         </div>
         <div class="mx-3 my-3">
@@ -446,9 +462,14 @@ const userId = Number(loginStore.currentUser?.id)
 onMounted(async () => {
   await CourseEnrolled.checkEnrollment(userId, courseId)
 
+  await CourseEnrolled.loadCountRatingAll(courseId)
+  await CourseEnrolled.loadAverageRating(courseId)
+
   await courseStore.loadCourseById(courseId)
   await courseStore.countEnrollments(courseId)
   await courseStore.countLessons(courseId)
+  await lessonStore.countVideoByCourseId(courseId)
+
   await lessonStore.loadLesson(courseId)
 
   const lessonId = lessonStore.lesson.id // Lấy id của lesson

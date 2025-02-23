@@ -133,7 +133,7 @@
               </button>
             </form>
           </div>
-          <div v-if="assignmentStore.score">
+          <div v-if="assignmentStore.scores">
             <div class="border-score">
               <div>
                 <p style="padding: 10px; margin-left: 35%; font-size: large; font-weight: bold">
@@ -145,15 +145,15 @@
                 <p class="py-3 px-5">
                   Score:
                   <span style="color: red; font-weight: bold"
-                    >{{ assignmentStore.score.score }} /
+                    >{{ assignmentStore.scores.score }} /
                     {{ assignmentStore.questions.length }}</span
                   >
                 </p>
                 <p class="px-5">
                   Remark:
-                  <span style="color: red; font-weight: bold">{{
-                    assignmentStore.score.feedBack
-                  }}</span>
+                  <span style="color: red; font-weight: bold">
+                    {{ assignmentStore.scores.feedBack || 'No feedback available' }}
+                  </span>
                 </p>
               </div>
             </div>

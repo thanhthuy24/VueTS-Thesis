@@ -121,6 +121,8 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
 
     // progressStatus de xem trang thai hoan thanh cua tung khoa hoc
     progressStatus: [] as Progress[],
+
+    checkProgress: false,
   }),
   actions: {
     async loadCourseList() {
@@ -274,6 +276,45 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
       }
     },
 
+    async checkProgressCertificate(courseId: number, userId: number) {
+      this.checkProgress = false
+      try {
+        const res = await authAPIs().get(
+          `${endpoints.progress}/check-progress/${courseId}/user/${userId}`,
+        )
+        this.checkProgress = res.data
+        console.log(res.data)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    async downLoadCertificate(username: string, courseName: string) {
+      try {
+        if (this.checkProgress === true) {
+          const response = await authAPIs().get(`${endpoints.certificate}/download-certificate`, {
+            params: {
+              studentName: username,
+              courseName: courseName,
+            },
+            responseType: 'blob',
+          })
+          const blob = new Blob([response.data], { type: 'application/pdf' })
+          const url = window.URL.createObjectURL(blob)
+          const a = document.createElement('a')
+          a.href = url
+          a.download = `certificate_${username}.pdf`
+          document.body.appendChild(a)
+          a.click()
+          document.body.removeChild(a)
+        } else {
+          toast.error('Course has not been completed!!')
+        }
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
     async loadAverageRating(courseId: number) {
       try {
         const res = await authAPIs().get(`${endpoints.rating}/${courseId}`)
@@ -288,7 +329,6 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
       try {
         const res = await authAPIs().get(`${endpoints.rating}/${courseId}/count`)
         this.countRatingAll = res.data
-        // console.log(res.data)
       } catch (err) {
         console.error(err)
       }
