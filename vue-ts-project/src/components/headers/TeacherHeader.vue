@@ -77,6 +77,7 @@
           </li>
         </ul>
       </div>
+
       <button
         data-collapse-toggle="navbar-user"
         type="button"

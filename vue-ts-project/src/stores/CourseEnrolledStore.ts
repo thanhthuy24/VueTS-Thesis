@@ -261,7 +261,7 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
       try {
         const res = await authAPIs().get(`${endpoints.progress}/get-progress/${courseId}`)
         this.progress[courseId] = res.data.completionPercentage
-        console.log(courseId + ': ' + this.progress[courseId])
+        // console.log(courseId + ': ' + this.progress[courseId])
       } catch (err) {
         console.error(err)
       }
@@ -283,7 +283,7 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
           `${endpoints.progress}/check-progress/${courseId}/user/${userId}`,
         )
         this.checkProgress = res.data
-        console.log(res.data)
+        // console.log(res.data)
       } catch (err) {
         console.error(err)
       }

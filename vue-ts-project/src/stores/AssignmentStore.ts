@@ -131,7 +131,7 @@ export const useAssignmentStore = defineStore('assignmentStore', {
     correctAnswers: [] as Choice[],
     score: {} as Score,
 
-    scores: {} as Score,
+    scores: [] as Score[],
 
     countAssignmentDone: {} as Record<number, number>,
 
@@ -169,15 +169,6 @@ export const useAssignmentStore = defineStore('assignmentStore', {
         this.assignmentsByLesson[lessonId] = [] // Nếu lỗi, đặt giá trị rỗng để tránh lỗi khi render
       }
     },
-
-    // async loadAssignmentTemp(lessonId: number) {
-    //   try {
-    //     const res = await authAPIs().get(`${endpoints.assignments}/lesson/${lessonId}`)
-    //     this.assignmentByLessonTemp = res.data // Lưu bài tập theo lessonId
-    //   } catch (err) {
-    //     console.error(err) // Nếu lỗi, đặt giá trị rỗng để tránh lỗi khi render
-    //   }
-    // },
 
     async addAssignmentDone(assignmentId: number) {
       try {
@@ -324,6 +315,14 @@ export const useAssignmentStore = defineStore('assignmentStore', {
 
     async addEssay(assignmentId: number) {
       console.log(this.answerEssays)
+      try {
+        await authAPIs().post(endpoints.essays, this.answerEssays)
+        toast.success('Do this assignment successully!!')
+        await this.addAssignmentDone(assignmentId)
+        await this.loadAssignmentDone(assignmentId)
+      } catch (err) {
+        console.error(err)
+      }
     },
 
     async loadEssaysByAssignmentId(assignmentId: number) {

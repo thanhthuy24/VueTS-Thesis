@@ -11,7 +11,8 @@ const messaging = getMessaging(app)
 export const requestForToken = async (userId: number) => {
   try {
     const token = await getToken(messaging, {
-      vapidKey: '',
+      vapidKey:
+        'BD9p8So0Of5mAycZ5-pdqNRKr0o_KdeploPIuts78kwQxN7myaWRhKPTOtty3NjdW13JwD2HpmtsMAz9nBGK-K4',
     })
     if (token) {
       console.log('FCM Token:', token)

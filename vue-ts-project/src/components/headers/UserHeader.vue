@@ -170,9 +170,10 @@
               </div></RouterLink
             >
           </li>
-          <li>
+          <li v-if="loginStore.isLoggedIn === true">
             <button
               type="button"
+              @click.stop="toggleDropdown"
               data-dropdown-toggle="notification-dropdown"
               class="mr-1 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
             >
@@ -190,6 +191,64 @@
                 />
               </svg>
             </button>
+            <!-- Dropdown menu -->
+            <div
+              v-if="isDropdownOpen"
+              class="absolute right-56 mt-2 z-50 my-4 max-w-sm text-base list-none bg-white rounded divide-y divide-gray-100 shadow-lg dark:divide-gray-600 dark:bg-gray-700"
+              id="notification-dropdown"
+            >
+              <div
+                class="block py-2 px-4 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+              >
+                Notifications
+              </div>
+              <div v-for="notic in notificationStore.notifications" :key="notic.id">
+                <a
+                  href="#"
+                  @click="isDropdownOpen = false"
+                  :class="{ 'bg-blue-100': !notic.isRead, 'bg-white': notic.isRead }"
+                  class="flex py-3 px-4 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600"
+                >
+                  <div class="flex-shrink-0">
+                    <img
+                      @click.stop="notificationStore.markReadNotification(notic.id)"
+                      class="w-11 h-11 rounded-full"
+                      src="http://res.cloudinary.com/dps7wzdje/image/upload/v1725802701/fcxv9lcoyh4qhbgtptqj.jpg"
+                      alt="Bonnie Green avatar"
+                    />
+                    <div
+                      class="flex justify-center items-center ml-6 -mt-5 w-5 h-5 rounded-full border border-white bg-primary-700 dark:border-gray-700"
+                    >
+                      <svg
+                        class="w-2 h-2 text-white"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="currentColor"
+                        viewBox="0 0 18 18"
+                      >
+                        <path
+                          d="M15.977.783A1 1 0 0 0 15 0H3a1 1 0 0 0-.977.783L.2 9h4.239a2.99 2.99 0 0 1 2.742 1.8 1.977 1.977 0 0 0 3.638 0A2.99 2.99 0 0 1 13.561 9H17.8L15.977.783ZM6 2h6a1 1 0 1 1 0 2H6a1 1 0 0 1 0-2Zm7 5H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Z"
+                        />
+                        <path
+                          d="M1 18h16a1 1 0 0 0 1-1v-6h-4.439a.99.99 0 0 0-.908.6 3.978 3.978 0 0 1-7.306 0 .99.99 0 0 0-.908-.6H0v6a1 1 0 0 0 1 1Z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="pl-3 w-full">
+                    <div class="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400">
+                      {{ notic.title }}
+                      <span class="font-semibold text-gray-900 dark:text-white">
+                        {{ notic.message }} </span
+                      >:
+                    </div>
+                    <div class="text-xs font-medium text-primary-700 dark:text-primary-400">
+                      {{ formattedTime(notic.createdDate) }}
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
           </li>
           <li></li>
         </ul>
@@ -221,6 +280,7 @@
         </div>
 
         <button
+          @click.stop="toggleDropdownUser"
           type="button"
           class="flex mx-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
           id="user-menu-button"
@@ -234,118 +294,9 @@
             alt="user photo"
           />
         </button>
-
-        <!-- <button
-          type="button"
-          class="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-          id="user-menu-button"
-          aria-expanded="false"
-          data-dropdown-toggle="user-dropdown"
-          data-dropdown-placement="bottom"
-        >
-          <span class="sr-only">Open user menu</span>
-          <img
-            class="w-8 h-8 rounded-full"
-            :src="loginStore.currentUser?.avatar"
-            alt="user photo"
-          />
-        </button> -->
-        <!-- Dropdown menu -->
-        <!-- <div
-          class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
-          id="user-dropdown"
-        >
-          <div class="px-4 py-3">
-            <span class="block text-sm text-gray-900 dark:text-white">{{
-              loginStore.currentUser?.username
-            }}</span>
-            <span class="block text-sm text-gray-500 truncate dark:text-gray-400">{{
-              loginStore.currentUser?.email
-            }}</span>
-          </div>
-          <ul class="py-2" aria-labelledby="user-menu-button">
-            <li>
-              <RouterLink to="/user-dashboard">
-                <a
-                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                  >Dashboard</a
-                ></RouterLink
-              >
-            </li>
-            <li>
-              <a
-                href="#"
-                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                >Settings</a
-              >
-            </li>
-            <li>
-              <a
-                href="#"
-                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                >Earnings</a
-              >
-            </li>
-            <li>
-              <a
-                style="cursor: pointer"
-                @click="loginStore.logout"
-                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                >Sign out</a
-              >
-            </li>
-          </ul>
-          <ul class="py-1 text-gray-500 dark:text-gray-400" aria-labelledby="dropdown">
-            <li>
-              <RouterLink to="/home">
-                <a
-                  style="cursor: pointer"
-                  class="flex items-center py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                >
-                  <svg
-                    class="mr-2 w-4 h-4 text-gray-400"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="currentColor"
-                    viewBox="0 0 20 18"
-                  >
-                    <path
-                      d="M17.947 2.053a5.209 5.209 0 0 0-3.793-1.53A6.414 6.414 0 0 0 10 2.311 6.482 6.482 0 0 0 5.824.5a5.2 5.2 0 0 0-3.8 1.521c-1.915 1.916-2.315 5.392.625 8.333l7 7a.5.5 0 0 0 .708 0l7-7a6.6 6.6 0 0 0 2.123-4.508 5.179 5.179 0 0 0-1.533-3.793Z"
-                    />
-                  </svg>
-                  My likes
-                </a></RouterLink
-              >
-            </li>
-            <li>
-              <a
-                href="#"
-                class="flex items-center py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-              >
-                <svg
-                  class="mr-2 w-4 h-4 text-gray-400"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    d="m1.56 6.245 8 3.924a1 1 0 0 0 .88 0l8-3.924a1 1 0 0 0 0-1.8l-8-3.925a1 1 0 0 0-.88 0l-8 3.925a1 1 0 0 0 0 1.8Z"
-                  />
-                  <path
-                    d="M18 8.376a1 1 0 0 0-1 1v.163l-7 3.434-7-3.434v-.163a1 1 0 0 0-2 0v.786a1 1 0 0 0 .56.9l8 3.925a1 1 0 0 0 .88 0l8-3.925a1 1 0 0 0 .56-.9v-.786a1 1 0 0 0-1-1Z"
-                  />
-                  <path
-                    d="M17.993 13.191a1 1 0 0 0-1 1v.163l-7 3.435-7-3.435v-.163a1 1 0 1 0-2 0v.787a1 1 0 0 0 .56.9l8 3.925a1 1 0 0 0 .88 0l8-3.925a1 1 0 0 0 .56-.9v-.787a1 1 0 0 0-1-1Z"
-                  />
-                </svg>
-                Collections
-              </a>
-            </li>
-          </ul>
-        </div> -->
         <div
-          class="hidden z-50 my-4 w-56 text-base list-none bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600"
+          v-if="isDropdownOpenUser"
+          class="absolute right-14 mt-96 z-50 my-4 w-56 text-base list-none bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600"
           id="dropdown"
         >
           <div class="px-4 py-3">
@@ -358,12 +309,16 @@
           </div>
           <ul class="py-1 text-gray-500 dark:text-gray-400" aria-labelledby="dropdown">
             <li>
-              <RouterLink to="/user-dashboard">
-                <a
-                  href="#"
+              <RouterLink
+                @click="isDropdownOpenUser = false"
+                to="/user-dashboard"
+                class="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white"
+              >
+                <!-- <a
                   class="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white"
-                  >My profile</a
-                >
+                > -->
+                My profile
+                <!-- </a> -->
               </RouterLink>
             </li>
             <li>
@@ -519,11 +474,76 @@
 </template>
 
 <script setup lang="ts">
+import { authAPIs } from '@/configs/APIs'
 import { useCartStore } from '@/stores/CartStore'
 import { useLoginStore } from '@/stores/LoginStore'
+import { useNotificationStore } from '@/stores/NotificationStore'
+import { formatDistanceToNow } from 'date-fns'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 
 const loginStore = useLoginStore()
 const cartStore = useCartStore()
+const notificationStore = useNotificationStore()
+
+// const timestamp = ref(); // Giá trị timestamp
+
+const formattedTime = (timestamp: number) => {
+  return formatDistanceToNow(new Date(timestamp), { addSuffix: true })
+}
+
+// State để kiểm soát hiển thị dropdown
+const isDropdownOpen = ref(false)
+const isDropdownOpenUser = ref(false)
+const route = useRoute()
+
+// Hàm toggle dropdown
+const toggleDropdown = () => {
+  isDropdownOpen.value = !isDropdownOpen.value
+  console.log('Dropdown status:', isDropdownOpen.value)
+}
+
+const toggleDropdownUser = () => {
+  isDropdownOpenUser.value = !isDropdownOpenUser.value
+  console.log('Dropdown status:', isDropdownOpenUser.value)
+}
+
+// Hàm đóng dropdown khi click bên ngoài
+const closeDropdown = (event: Event) => {
+  const dropdown = document.getElementById('notification-dropdown')
+  if (dropdown && !dropdown.contains(event.target as Node)) {
+    isDropdownOpen.value = false
+  }
+}
+
+const closeDropdownUser = (event: Event) => {
+  const dropdown = document.getElementById('notification-dropdown')
+  if (dropdown && !dropdown.contains(event.target as Node)) {
+    isDropdownOpenUser.value = false
+  }
+}
+
+// const handleMarkupReading = async (notificationId: number) => {
+//   await notificationStore.markReadNotification(notificationId)
+// }
+
+// Theo dõi sự thay đổi của route để đóng dropdown khi chuyển trang
+watch(route, () => {
+  isDropdownOpen.value = false
+  isDropdownOpenUser.value = false
+})
+
+// Gắn sự kiện click bên ngoài khi component được mounted
+onMounted(async () => {
+  document.addEventListener('click', closeDropdown)
+
+  await notificationStore.loadNotifications()
+})
+
+// Gỡ sự kiện khi component bị hủy
+onUnmounted(() => {
+  document.removeEventListener('click', closeDropdown)
+})
 </script>
 
 <style scoped></style>

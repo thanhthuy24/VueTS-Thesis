@@ -53,6 +53,8 @@ export const endpoints = {
 
   notifications: '/notifications',
 
+  'get-notification': '/get-notification',
+
   token: '/token',
   certificate: '/certificate',
 }

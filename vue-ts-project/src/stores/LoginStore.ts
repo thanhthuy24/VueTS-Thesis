@@ -180,6 +180,8 @@ export const useLoginStore = defineStore('loginStore', {
       localStorage.removeItem('expireTime')
       localStorage.removeItem('currentUser')
       localStorage.removeItem('role')
+
+      window.location.reload()
     },
 
     loginAcc(username: string, password: string) {

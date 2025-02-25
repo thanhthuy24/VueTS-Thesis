@@ -75,7 +75,7 @@
               </button>
             </form>
           </div>
-          <div v-else class="mr-36">
+          <div v-else class="mr-36" style="width: 750px">
             <form @submit.prevent="assignmentStore.addEssay(assignmentId)">
               <div v-for="(item, index) in assignmentStore.questionEssay" :key="index">
                 <p>Câu {{ index + 1 }}: {{ item.content }}</p>
@@ -113,9 +113,21 @@
                   </div>
                 </div>
               </div>
+              <div
+                class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300"
+                role="alert"
+              >
+                <span class="font-medium">Essay Submitted!</span> Your essay has been successfully
+                submitted and is awaiting review. Your teacher will check it soon and provide a
+                score along with feedback. Stay tuned!
+              </div>
+
               <button
                 disabled
-                v-if="assignmentStore.assignmentDone[assignmentId]"
+                v-if="
+                  assignmentStore.assignmentDone[assignmentId] ||
+                  !isExpired(assignmentStore.assignment.dueDate)
+                "
                 style="width: 210px; margin-left: 3%; margin-top: 1%"
                 type="submit"
                 class="text-white bg-slate-400 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
@@ -133,8 +145,8 @@
               </button>
             </form>
           </div>
-          <div v-if="assignmentStore.scores">
-            <div class="border-score">
+          <div v-if="assignmentStore.scores && assignmentStore.scores.length > 0">
+            <div v-for="a in assignmentStore.scores" :key="a.id" class="border-score">
               <div>
                 <p style="padding: 10px; margin-left: 35%; font-size: large; font-weight: bold">
                   Result
@@ -144,15 +156,17 @@
               <div>
                 <p class="py-3 px-5">
                   Score:
-                  <span style="color: red; font-weight: bold"
-                    >{{ assignmentStore.scores.score }} /
-                    {{ assignmentStore.questions.length }}</span
+                  <span
+                    v-if="assignmentStore.assignment.tag.id == 5"
+                    style="color: red; font-weight: bold"
+                    >{{ a.score }} / {{ assignmentStore.questions.length }}</span
                   >
+                  <span style="color: red; font-weight: bold" v-else>{{ a.score }}</span>
                 </p>
                 <p class="px-5">
                   Remark:
                   <span style="color: red; font-weight: bold">
-                    {{ assignmentStore.scores.feedBack || 'No feedback available' }}
+                    {{ a.feedBack || 'No feedback available' }}
                   </span>
                 </p>
               </div>
@@ -175,6 +189,12 @@ const assignmentStore = useAssignmentStore()
 
 const content = ref('')
 
+const isExpired = (dueDate: number) => {
+  const now = new Date()
+  // console.log(now);
+  return dueDate > now.getTime()
+}
+
 onMounted(async () => {
   await assignmentStore.loadAssignment(assignmentId)
   await assignmentStore.loadQuestions(assignmentId)
@@ -193,7 +213,7 @@ onMounted(async () => {
   border: 1px solid black;
   border-radius: 10px;
   width: 300px;
-  height: 200px;
+  height: auto;
   padding: 10px;
 }
 </style>
