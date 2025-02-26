@@ -115,9 +115,10 @@
                 @click="cartStore.checkoutByMoMo(totalPrice, loginStore.token)"
                 style="width: 400px; border-radius: 10px; font-size: large"
                 type="button"
-                class="mx-3 my-8 text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                class="btn-momo my-5 ml-2"
               >
-                Checkout
+                <!-- class="mx-3 my-8 text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" -->
+                Checkout by Momo
               </button>
             </div>
             <div>
@@ -130,8 +131,9 @@
                   )
                 "
                 type="button"
-                class="mx-3 my-3 py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-full border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                class="btn-paypal ml-2"
               >
+                <!-- class="mx-3 my-3 py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-full border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" -->
                 Checkout by Paypal
               </button>
             </div>
@@ -143,11 +145,10 @@
 </template>
 
 <script setup lang="ts">
-// import { authAPIs, endpoints } from '@/configs/APIs'
 import { useCartStore } from '@/stores/CartStore'
 import { useLoginStore } from '@/stores/LoginStore'
 import { computed, onMounted, ref } from 'vue'
-// import { v4 as uuidv4 } from 'uuid'
+// import { useRoute, useRouter } from 'vue-router'
 
 const cartStore = useCartStore()
 const loginStore = useLoginStore()
@@ -185,8 +186,6 @@ const formatCurrencyWithRoundingUSD = (value: number): string => {
 
 const exchangeRate = ref<number>(0)
 const loading = ref<boolean>(true)
-// const error = ref<string | null>(null)
-// const amountInUSD = ref<number>(0)
 
 const fetchExchangeRate = async () => {
   try {
@@ -200,12 +199,7 @@ const fetchExchangeRate = async () => {
   }
 }
 
-// const convertToVND = (usd: number) => usd * exchangeRate.value
 const converToUSD = (vnd: number) => vnd / exchangeRate.value
-// Computed: Kết quả quy đổi định dạng 3 số sau dấu phẩy
-// const formattedConvertedVND = computed(() =>
-//   formatCurrencyWithRounding(convertToVND(amountInUSD.value)),
-// )
 
 const formattedConvertedUSD = (value: number): string => {
   const valueInUSD = converToUSD(value)
@@ -214,8 +208,16 @@ const formattedConvertedUSD = (value: number): string => {
   return formatCurrencyWithRoundingUSD(formattedValue)
 }
 
+// const route = useRoute()
+// const router = useRouter()
+
 onMounted(() => {
   fetchExchangeRate()
+  // const errorCode = route.query.errorCode
+
+  // if (errorCode === '0') {
+  //   router.push('/momo/success')
+  // }
   // cartStore.checkoutSuccess(loginStore.token)
 })
 </script>
@@ -234,5 +236,43 @@ onMounted(() => {
   border: 1px solid grey;
   border-radius: 10px;
   /* padding: 5px; */
+}
+
+.btn-momo {
+  width: 400px;
+  border-radius: 30px;
+  font-size: large;
+  background-color: #d82d8b;
+  color: white;
+  padding: 12px 24px;
+  font-weight: bold;
+  border: none;
+  box-shadow: 0 4px 6px rgba(216, 45, 139, 0.3);
+  transition: all 0.3s ease-in-out;
+}
+
+.btn-momo:hover {
+  background-color: #b82474;
+  box-shadow: 0 6px 10px rgba(216, 45, 139, 0.5);
+}
+
+/* PayPal Button */
+.btn-paypal {
+  width: 400px;
+  border-radius: 30px;
+  font-size: large;
+  background-color: #ffc439;
+  color: #111;
+  padding: 12px 24px;
+  font-weight: bold;
+  border: 2px solid #005ea6;
+  box-shadow: 0 4px 6px rgba(0, 94, 166, 0.3);
+  transition: all 0.3s ease-in-out;
+}
+
+.btn-paypal:hover {
+  background-color: #005ea6;
+  color: white;
+  box-shadow: 0 6px 10px rgba(0, 94, 166, 0.5);
 }
 </style>

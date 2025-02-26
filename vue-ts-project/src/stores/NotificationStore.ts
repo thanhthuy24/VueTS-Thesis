@@ -32,19 +32,33 @@ export const useNotificationStore = defineStore('notificationStore', {
     page: 0,
     limit: 5,
     totalPages: 0,
+    isLoading: false,
   }),
   actions: {
     async loadNotifications() {
-      const res = await authAPIs().get(endpoints['get-notification'], {
-        params: {
-          page: this.page,
-          limit: this.limit,
-        },
-      })
-      this.notifications = res.data.notifications
-      this.totalPages = res.data.totalPages
+      if (this.isLoading || (this.page >= this.totalPages && this.page != 0)) {
+        return
+      }
 
-      console.log(res.data.notifications)
+      this.isLoading = true
+
+      try {
+        const res = await authAPIs().get(endpoints['get-notification'], {
+          params: {
+            page: this.page,
+            limit: this.limit,
+          },
+        })
+        this.notifications = [...this.notifications, ...res.data.notifications]
+
+        this.totalPages = res.data.totalPages
+        this.page += 1
+        // console.log(res.data.notifications)
+      } catch (err) {
+        console.error('Lỗi khi tải thông báo:', err)
+      } finally {
+        this.isLoading = false
+      }
     },
 
     async markReadNotification(notificationId: number) {

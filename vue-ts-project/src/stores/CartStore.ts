@@ -89,7 +89,7 @@ export const useCartStore = defineStore('cartStore', {
 
     async checkoutByMoMo(totalPrice: number, token: string) {
       try {
-        toast.warning('This course in cart before!!')
+        // toast.warning('This course in cart before!!')
         const newOrderId = uuidv4()
         console.log(newOrderId)
         const res = await authAPIs().post(
@@ -97,7 +97,7 @@ export const useCartStore = defineStore('cartStore', {
           {
             orderId: newOrderId,
             amount: totalPrice, // Sử dụng .value vì đây là ref
-            returnUrl: 'http://localhost:8082/cart',
+            returnUrl: 'http://localhost:8082/check-payment',
           },
           {
             headers: {
@@ -109,13 +109,19 @@ export const useCartStore = defineStore('cartStore', {
         const payUrl = res.data.payUrl
         if (payUrl) {
           window.location.href = payUrl
-          this.createReceipt(token)
         } else {
           console.error('payUrl không tồn tại')
         }
       } catch (err) {
         console.error('Thanh toán thất bại: ' + err)
       }
+    },
+
+    async checkoutSuccessMoMo(token: string) {
+      toast.success('Thanh toán thành công!!')
+      await this.createReceipt(token)
+      await new Promise((resolve) => setTimeout(resolve, 3000))
+      window.location.href = '/home'
     },
 
     async createReceipt(token: string) {

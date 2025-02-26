@@ -61,6 +61,30 @@ const router = createRouter({
       component: () => import('../views/cart/PaypalCancel.vue'),
     },
     {
+      path: '/check-payment',
+      meta: {
+        layout: 'NoHeaderLayout',
+      },
+      name: 'momo-check-payment',
+      component: () => import('../views/cart/momo/MoMoCallback.vue'),
+    },
+    {
+      path: '/momo/success',
+      meta: {
+        layout: 'NoHeaderLayout',
+      },
+      name: 'momo-success',
+      component: () => import('../views/cart/momo/MoMoSuccess.vue'),
+    },
+    {
+      path: '/momo/cancel',
+      meta: {
+        layout: 'NoHeaderLayout',
+      },
+      name: 'momo-cancel',
+      component: () => import('../views/cart/momo/MoMoCancel.vue'),
+    },
+    {
       path: '/forbidden',
       meta: {
         layout: 'NoHeaderLayout',

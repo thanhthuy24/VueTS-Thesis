@@ -198,55 +198,81 @@
               id="notification-dropdown"
             >
               <div
-                class="block py-2 px-4 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+                v-if="notificationStore.notifications && notificationStore.notifications.length > 0"
               >
-                Notifications
-              </div>
-              <div v-for="notic in notificationStore.notifications" :key="notic.id">
-                <a
-                  href="#"
-                  @click="isDropdownOpen = false"
-                  :class="{ 'bg-blue-100': !notic.isRead, 'bg-white': notic.isRead }"
-                  class="flex py-3 px-4 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600"
+                <div
+                  class="block py-2 px-4 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
                 >
-                  <div class="flex-shrink-0">
-                    <img
-                      @click.stop="notificationStore.markReadNotification(notic.id)"
-                      class="w-11 h-11 rounded-full"
-                      src="http://res.cloudinary.com/dps7wzdje/image/upload/v1725802701/fcxv9lcoyh4qhbgtptqj.jpg"
-                      alt="Bonnie Green avatar"
-                    />
-                    <div
-                      class="flex justify-center items-center ml-6 -mt-5 w-5 h-5 rounded-full border border-white bg-primary-700 dark:border-gray-700"
-                    >
-                      <svg
-                        class="w-2 h-2 text-white"
-                        aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="currentColor"
-                        viewBox="0 0 18 18"
+                  Notifications
+                </div>
+                <div v-for="notic in notificationStore.notifications" :key="notic.id">
+                  <a
+                    href="#"
+                    @click="isDropdownOpen = false"
+                    :class="{ 'bg-blue-100': !notic.isRead, 'bg-white': notic.isRead }"
+                    class="flex py-3 px-4 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600"
+                  >
+                    <div class="flex-shrink-0">
+                      <img
+                        @click.stop="notificationStore.markReadNotification(notic.id)"
+                        class="w-11 h-11 rounded-full"
+                        src="http://res.cloudinary.com/dps7wzdje/image/upload/v1725802701/fcxv9lcoyh4qhbgtptqj.jpg"
+                        alt="Bonnie Green avatar"
+                      />
+                      <div
+                        class="flex justify-center items-center ml-6 -mt-5 w-5 h-5 rounded-full border border-white bg-primary-700 dark:border-gray-700"
                       >
-                        <path
-                          d="M15.977.783A1 1 0 0 0 15 0H3a1 1 0 0 0-.977.783L.2 9h4.239a2.99 2.99 0 0 1 2.742 1.8 1.977 1.977 0 0 0 3.638 0A2.99 2.99 0 0 1 13.561 9H17.8L15.977.783ZM6 2h6a1 1 0 1 1 0 2H6a1 1 0 0 1 0-2Zm7 5H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Z"
-                        />
-                        <path
-                          d="M1 18h16a1 1 0 0 0 1-1v-6h-4.439a.99.99 0 0 0-.908.6 3.978 3.978 0 0 1-7.306 0 .99.99 0 0 0-.908-.6H0v6a1 1 0 0 0 1 1Z"
-                        />
-                      </svg>
+                        <svg
+                          class="w-2 h-2 text-white"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="currentColor"
+                          viewBox="0 0 18 18"
+                        >
+                          <path
+                            d="M15.977.783A1 1 0 0 0 15 0H3a1 1 0 0 0-.977.783L.2 9h4.239a2.99 2.99 0 0 1 2.742 1.8 1.977 1.977 0 0 0 3.638 0A2.99 2.99 0 0 1 13.561 9H17.8L15.977.783ZM6 2h6a1 1 0 1 1 0 2H6a1 1 0 0 1 0-2Zm7 5H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Z"
+                          />
+                          <path
+                            d="M1 18h16a1 1 0 0 0 1-1v-6h-4.439a.99.99 0 0 0-.908.6 3.978 3.978 0 0 1-7.306 0 .99.99 0 0 0-.908-.6H0v6a1 1 0 0 0 1 1Z"
+                          />
+                        </svg>
+                      </div>
                     </div>
-                  </div>
-                  <div class="pl-3 w-full">
-                    <div class="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400">
-                      {{ notic.title }}
-                      <span class="font-semibold text-gray-900 dark:text-white">
-                        {{ notic.message }} </span
-                      >:
+                    <div class="pl-3 w-full">
+                      <div class="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400">
+                        {{ notic.title }}
+                        <span class="font-semibold text-gray-900 dark:text-white">
+                          {{ notic.message }} </span
+                        >:
+                      </div>
+                      <div class="text-xs font-medium text-primary-700 dark:text-primary-400">
+                        {{ formattedTime(notic.createdDate) }}
+                      </div>
                     </div>
-                    <div class="text-xs font-medium text-primary-700 dark:text-primary-400">
-                      {{ formattedTime(notic.createdDate) }}
-                    </div>
-                  </div>
-                </a>
+                  </a>
+                </div>
+                <!-- Nút View More -->
+                <div
+                  v-if="notificationStore.page < notificationStore.totalPages"
+                  class="text-center py-2"
+                >
+                  <button
+                    @click="notificationStore.loadNotifications"
+                    class="text-blue-500 hover:underline text-sm"
+                  >
+                    View More
+                  </button>
+                </div>
+              </div>
+              <div v-else>
+                <div
+                  class="block py-2 px-4 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+                >
+                  Notifications
+                </div>
+                <div class="py-4 px-6 text-center text-gray-500 dark:text-gray-400">
+                  Không có thông báo nào.
+                </div>
               </div>
             </div>
           </li>
