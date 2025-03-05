@@ -217,6 +217,108 @@
       </div>
     </aside>
     <div class="p-4">
+      <div class="mb-5">
+        <div>
+          <p>Các khóa học gợi ý cho bạn</p>
+        </div>
+        <div>
+          <div id="course-carousel" class="relative w-full" data-carousel="slide">
+            <!-- Carousel wrapper -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              <div
+                v-for="c in courseStore.recommendCourses"
+                :key="c.id"
+                class="flex-courses bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+              >
+                <RouterLink :to="{ name: 'course-detail', params: { courseId: c.id } }">
+                  <a> <img class="rounded-t-lg image-tital-course" :src="c.image" alt="" /> </a
+                ></RouterLink>
+                <div class="p-5 flex-grow">
+                  <!-- <a href="#"> -->
+                  <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                    {{ c.name }}
+                  </h5>
+                  <!-- </a> -->
+                  <div class="my-2">
+                    <span
+                      class="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-yellow-300 border border-yellow-300"
+                      >{{ c.teacher.user.username }}</span
+                    >
+                  </div>
+
+                  <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                    {{ toggleReadMore ? c.description : `${c.description.slice(0, maxLength)}...`
+                    }}<span class="text-blue-600"> Read more</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slider indicators -->
+            <div class="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3">
+              <button
+                v-for="(course, index) in courseStore.recommendCourses"
+                :key="'indicator-' + index"
+                type="button"
+                class="w-3 h-3 rounded-full bg-white"
+                :data-carousel-slide-to="index"
+              ></button>
+            </div>
+
+            <!-- Slider controls -->
+            <button
+              type="button"
+              class="absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
+              data-carousel-prev
+            >
+              <span
+                class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30"
+              >
+                <svg
+                  class="w-4 h-4 text-white"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 6 10"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 1 1 5l4 4"
+                  />
+                </svg>
+              </span>
+            </button>
+            <button
+              type="button"
+              class="absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
+              data-carousel-next
+            >
+              <span
+                class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30"
+              >
+                <svg
+                  class="w-4 h-4 text-white"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 6 10"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="m1 9 4-4-4-4"
+                  />
+                </svg>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
       <div
         class="mb-5 p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 grid grid-cols-2 md:grid-cols-4 gap-4"
       >
@@ -381,6 +483,7 @@ import { onMounted, ref } from 'vue'
 import PaginationLayout from './pagination/PaginationLayout.vue'
 import { useCartStore } from '@/stores/CartStore'
 import { RouterLink } from 'vue-router'
+import { Carousel } from 'flowbite'
 // import { authAPIs, endpoints } from '@/configs/APIs'
 
 const courseStore = useCourseStore()
@@ -403,11 +506,28 @@ const formatCurrencyWithRounding = (value: number) => {
 const maxLength = 100
 const toggleReadMore = ref(false)
 
+// const carouselRef = ref<HTMLElement | null>(null)
+// const carouselInstance: Carousel | null = null
+
+// // Chuyển đến slide tiếp theo
+// const nextSlide = () => {
+//   carouselInstance?.next()
+// }
+
+// // Chuyển đến slide trước đó
+// const prevSlide = () => {
+//   carouselInstance?.prev()
+// }
+
 // run function
 onMounted(async () => {
   await courseStore.loadCates()
   await courseStore.loadCourses()
   await courseStore.loadCoursesByPrice()
+  await courseStore.loadRecommendationCourses(loginStore.currentUser.id)
+  // if (carouselRef.value) {
+  //   carouselInstance = new Carousel(carouselRef.value)
+  // }
 })
 </script>
 

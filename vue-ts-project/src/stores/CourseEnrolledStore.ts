@@ -53,6 +53,7 @@ interface Comment {
   createdDate: number
   lesson: Lesson
   user: User
+  sentiment: string
 }
 
 interface ReplyComment {

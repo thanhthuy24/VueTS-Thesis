@@ -46,7 +46,7 @@ export const useCourseStore = defineStore('courseStore', {
     course: {} as Course,
     totalPages: 0,
     page: 0,
-    limit: 6,
+    limit: 8,
     cateFilter: null as number | null,
     minPrice: null as number | null,
     maxPrice: null as number | null,
@@ -60,6 +60,8 @@ export const useCourseStore = defineStore('courseStore', {
 
     coursesForTeacher: [] as Course[],
     totalPagesTeacher: 0,
+
+    recommendCourses: [] as Course[],
   }),
 
   actions: {
@@ -240,6 +242,24 @@ export const useCourseStore = defineStore('courseStore', {
       if (newPage >= 0 && newPage < this.totalPagesTeacher) {
         this.page = newPage
         await this.loadCoursesForTeacher(teacherId)
+      }
+    },
+
+    async addViewCourse(courseId: number) {
+      try {
+        await authAPIs().post(`${endpoints.view}/course/${courseId}`)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    async loadRecommendationCourses(userId: number) {
+      try {
+        const res = await authAPIs().get(`${endpoints.recommend}/user/${userId}`)
+        this.recommendCourses = res.data
+        console.log(res.data)
+      } catch (err) {
+        console.error(err)
       }
     },
 

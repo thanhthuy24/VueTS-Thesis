@@ -57,6 +57,11 @@ export const endpoints = {
 
   token: '/token',
   certificate: '/certificate',
+
+  view: '/views',
+  'login-social': '/login',
+
+  recommend: '/ai-recommend',
 }
 
 export const authAPIs = () => {

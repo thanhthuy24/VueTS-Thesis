@@ -13,6 +13,14 @@ const router = createRouter({
       component: HomeView,
     },
     {
+      path: '/auth/google/callback',
+      name: 'UserLoginBySocial',
+      meta: {
+        layout: 'NoHeaderLayout',
+      },
+      component: () => import('@/views/login/LoginBySocial.vue'),
+    },
+    {
       path: '/login',
       name: 'UserLogin',
       meta: {

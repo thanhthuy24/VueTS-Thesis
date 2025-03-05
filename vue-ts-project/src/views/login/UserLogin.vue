@@ -60,7 +60,7 @@
         </div>
 
         <div class="flex justify-center mb-10 mt-10">
-          <div>
+          <div @click="handleLoginBySocial">
             <img src="@/assets/google_logo.svg.png" class="w-12 h-12" />
           </div>
           <div class="ml-10">
@@ -98,6 +98,10 @@ const handleLogin = () => {
   } else {
     console.log('Username or password is missing')
   }
+}
+
+const handleLoginBySocial = async () => {
+  await loginStore.loginBySocialGoogle()
 }
 
 onMounted(async () => {

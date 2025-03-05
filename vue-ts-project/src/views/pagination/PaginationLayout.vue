@@ -2,9 +2,10 @@
 <template>
   <nav aria-label="Page navigation example">
     <ul class="flex items-center -space-x-px h-10 text-base">
+      <!-- Nút Previous -->
       <li
         style="cursor: pointer"
-        :class="{ disabled: currentPage === 1 }"
+        :class="{ 'opacity-50 pointer-events-none': currentPage === 1 }"
         @click="$emit('page-change', currentPage - 1)"
       >
         <a
@@ -28,22 +29,33 @@
           </svg>
         </a>
       </li>
+
+      <!-- Các số trang -->
       <li
         style="cursor: pointer"
         v-for="page in pages"
         :key="page"
-        :class="{ active: page === currentPage, disable: page === '...' }"
-        @click="$emit('page-change', page)"
+        :class="{
+          'bg-blue-500 text-white border-blue-500': page === currentPage,
+          'opacity-50 pointer-events-none': page === '...',
+        }"
+        @click="page !== '...' && $emit('page-change', page)"
       >
         <a
           class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-          >{{ page + 1 }}</a
+          :class="{
+            'bg-blue-500 text-blue-700 border-blue-500 hover:bg-blue-600 font-bold':
+              page === currentPage,
+          }"
         >
+          {{ page }}
+        </a>
       </li>
 
+      <!-- Nút Next -->
       <li
         style="cursor: pointer"
-        :class="{ disabled: currentPage === totalPage - 1 }"
+        :class="{ 'opacity-50 pointer-events-none': currentPage === totalPage }"
         @click="$emit('page-change', currentPage + 1)"
       >
         <a
@@ -70,6 +82,7 @@
     </ul>
   </nav>
 </template>
+
 <script setup lang="ts">
 import { computed } from 'vue'
 
@@ -90,33 +103,34 @@ const props = defineProps({
 
 const pages = computed(() => {
   const maxPage = 10
-  const result = []
+  const result: (number | string)[] = []
 
   if (props.totalPage <= maxPage) {
-    for (let i = 0; i < props.totalPage; i++) {
+    for (let i = 1; i <= props.totalPage; i++) {
       result.push(i)
     }
   } else {
-    result.push(1) //trang đầu tiên
+    result.push(1) // Trang đầu tiên
 
     if (props.currentPage > 4) {
       result.push('...')
     }
 
-    //hiển thị các trang xung quanh trang hiện tại
+    // Hiển thị các trang xung quanh currentPage
     const start = Math.max(2, props.currentPage - 2)
-    const end = Math.min(props.totalPage - 1, props.totalPage + 2)
+    const end = Math.min(props.totalPage - 1, props.currentPage + 2) // Chỉnh lại end
 
     for (let i = start; i <= end; i++) {
       result.push(i)
     }
 
     if (props.currentPage < props.totalPage - 3) {
-      result.push('...') // Thêm dấu "..."
+      result.push('...')
     }
 
-    result.push(props.totalPage)
+    result.push(props.totalPage) // Trang cuối cùng
   }
+
   return result
 })
 

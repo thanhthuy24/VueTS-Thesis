@@ -170,6 +170,66 @@ export const useLoginStore = defineStore('loginStore', {
       }
     },
 
+    async loginBySocialGoogle() {
+      // console.log('login by google')
+      const res = await APIs.get(`${endpoints['login-social']}/auth/social-login`, {
+        params: {
+          login_type: 'google',
+        },
+      })
+      window.location.href = res.data
+    },
+
+    async loadLoginBySocialGoogle(code: string) {
+      try {
+        const res = await APIs.get(`${endpoints['login-social']}/auth/social/callback`, {
+          params: {
+            code: code,
+            login_type: 'google',
+          },
+        })
+        this.token = res.data
+        localStorage.setItem('token', this.token)
+
+        // lưu thời điểm hết hạn
+        const expireTime = dayjs().add(3, 'hour').toISOString()
+        localStorage.setItem('expireTime', expireTime)
+
+        const response = await APIs.get(endpoints.currentUser, {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        })
+        this.currentUser = response.data
+        // console.log(this.currentUser)
+        this.role = response.data.role.name
+        this.isLoggedIn = true
+        this.statusWarning = false
+
+        localStorage.setItem('currentUser', JSON.stringify(this.currentUser))
+        localStorage.setItem('role', this.role)
+
+        switch (this.role) {
+          case 'ADMIN':
+            router.push('/admin')
+            break
+          case 'USER':
+            router.push('/home')
+            break
+          case 'TEACHER':
+            router.push('/teacher')
+            break
+          default:
+            router.push('/login')
+            break
+        }
+      } catch (err) {
+        this.isLoggedIn = false
+        this.statusWarning = true
+        console.error(err)
+      }
+    },
+
     logout() {
       // authAPIs().delete(`${endpoints.token}/${this.currentUser?.id}`)
       this.isLoggedIn = false

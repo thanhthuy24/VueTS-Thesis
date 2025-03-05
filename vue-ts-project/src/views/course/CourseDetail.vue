@@ -468,6 +468,8 @@ onMounted(async () => {
   await courseStore.loadCourseById(courseId)
   await courseStore.countEnrollments(courseId)
   await courseStore.countLessons(courseId)
+  await courseStore.addViewCourse(courseId)
+
   await lessonStore.countVideoByCourseId(courseId)
 
   await lessonStore.loadLesson(courseId)
