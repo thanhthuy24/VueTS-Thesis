@@ -93,6 +93,8 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
     totalPages: 0,
     totalPagesReplyCmt: 0,
     totalPagesReview: 0,
+    sentiment: '' as string | null,
+    rate: 0 as number | null,
 
     page: 0,
     limit: 2,
@@ -101,7 +103,8 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
     limitReplyCmt: 3,
 
     pageReviews: 0,
-    limitReviews: 10,
+    limitReviews: 6,
+    review: [] as Review[],
 
     comments: [] as Comment[],
     countComment: 0,
@@ -113,8 +116,6 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
     countRatingAll: 0,
     averagePerRate: [],
     countPerRate: [],
-
-    review: [] as Review[],
 
     listCourseEnrolled: [] as Enrollment[],
     // progressList de xem % hoan thanh cua tung khoa hoc
@@ -229,7 +230,11 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
         toast.success('Comment successfully!!!')
         await this.loadCommentByLessonId(lessonId)
       } catch (err) {
-        console.error(err)
+        if (err.response?.status === 403) {
+          toast.error('🚫 Bình luận bị chặn do nội dung độc hại!')
+        } else {
+          toast.error('❌ Đã có lỗi xảy ra!')
+        }
       }
     },
 
@@ -376,6 +381,56 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
       }
     },
 
+    async loadReviewsBySentiment(courseId: number) {
+      try {
+        const res = await authAPIs().get(`${endpoints.rating}/find-by-sentiment`, {
+          params: {
+            page: this.pageReviews,
+            limit: this.limitReviews,
+            sentiment: this.sentiment,
+            courseId: courseId,
+          },
+        })
+        this.review = res.data.ratings
+        this.totalPagesReview = res.data.totalPages
+
+        // console.log(res.data)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    async loadReviewsByRate(courseId: number) {
+      try {
+        const res = await authAPIs().get(`${endpoints.rating}/find-by-rate`, {
+          params: {
+            page: this.pageReviews,
+            limit: this.limitReviews,
+            rate: this.rate,
+            courseId: courseId,
+          },
+        })
+        this.review = res.data.ratings
+        this.totalPagesReview = res.data.totalPages
+
+        // console.log(res.data)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+
+    filterSentiment(sentiment: string | null, courseId: number) {
+      this.sentiment = sentiment
+      this.pageReviews = 0
+      this.loadReviewsBySentiment(courseId)
+    },
+
+    filterRate(rate: number | null, courseId: number) {
+      this.rate = rate
+      this.pageReviews = 0
+      this.loadReviewsByRate(courseId)
+    },
+
     async addReview(comment: string, rating: number, courseId: number) {
       try {
         const res = await authAPIs().post(endpoints.rating, {
@@ -400,6 +455,13 @@ export const useCourseEnrolled = defineStore('courseEnrolled', {
       if (newPage >= 0 && newPage < this.totalPages) {
         this.page = newPage
         await this.loadCommentByLessonId(lessonId)
+      }
+    },
+
+    async changePageReview(newPage: number, courseId: number) {
+      if (newPage >= 0 && newPage < this.totalPagesReview) {
+        this.pageReviews = newPage
+        await this.loadReviews(courseId)
       }
     },
   },

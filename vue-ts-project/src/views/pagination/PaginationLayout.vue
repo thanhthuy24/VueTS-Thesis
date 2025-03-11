@@ -5,7 +5,7 @@
       <!-- Nút Previous -->
       <li
         style="cursor: pointer"
-        :class="{ 'opacity-50 pointer-events-none': currentPage === 1 }"
+        :class="{ 'opacity-50 pointer-events-none': currentPage === 0 }"
         @click="$emit('page-change', currentPage - 1)"
       >
         <a

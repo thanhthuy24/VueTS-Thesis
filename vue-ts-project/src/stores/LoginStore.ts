@@ -93,6 +93,7 @@ export const useLoginStore = defineStore('loginStore', {
       } catch (err) {
         this.isLoggedIn = false
         this.statusWarning = true
+
         console.error(err)
       }
     },

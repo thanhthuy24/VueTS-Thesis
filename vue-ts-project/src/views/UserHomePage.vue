@@ -483,7 +483,6 @@ import { onMounted, ref } from 'vue'
 import PaginationLayout from './pagination/PaginationLayout.vue'
 import { useCartStore } from '@/stores/CartStore'
 import { RouterLink } from 'vue-router'
-import { Carousel } from 'flowbite'
 // import { authAPIs, endpoints } from '@/configs/APIs'
 
 const courseStore = useCourseStore()
